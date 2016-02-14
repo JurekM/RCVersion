@@ -10,6 +10,16 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Test output files
+*-out.rc
+
+# Output files
+_[Dd]ebug-*/
+_[Rr]elease-*/
+
+# Intermediate files
+__int/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
