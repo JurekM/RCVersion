@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RCVersion", "RCVersion\RCVe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{E5854EE7-ECCE-4EA9-8954-31A0650246A1}"
 	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
 		test-in.rc = test-in.rc
 		test-info.cs = test-info.cs
 	EndProjectSection
