@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{E5854EE7
 		test-info.cs = test-info.cs
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RCVersionTests", "RCVersionTests\RCVersionTests.vcxproj", "{E05BBE21-5426-46DA-9384-E615ACF10624}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{1FBAC31D-B53A-4F2C-AF7C-479D4D79E3AB}.Release|x64.Build.0 = Release|x64
 		{1FBAC31D-B53A-4F2C-AF7C-479D4D79E3AB}.Release|x86.ActiveCfg = Release|Win32
 		{1FBAC31D-B53A-4F2C-AF7C-479D4D79E3AB}.Release|x86.Build.0 = Release|Win32
+		{E05BBE21-5426-46DA-9384-E615ACF10624}.Debug|x64.ActiveCfg = Debug|x64
+		{E05BBE21-5426-46DA-9384-E615ACF10624}.Debug|x64.Build.0 = Debug|x64
+		{E05BBE21-5426-46DA-9384-E615ACF10624}.Debug|x86.ActiveCfg = Debug|Win32
+		{E05BBE21-5426-46DA-9384-E615ACF10624}.Debug|x86.Build.0 = Debug|Win32
+		{E05BBE21-5426-46DA-9384-E615ACF10624}.Release|x64.ActiveCfg = Release|x64
+		{E05BBE21-5426-46DA-9384-E615ACF10624}.Release|x64.Build.0 = Release|x64
+		{E05BBE21-5426-46DA-9384-E615ACF10624}.Release|x86.ActiveCfg = Release|Win32
+		{E05BBE21-5426-46DA-9384-E615ACF10624}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

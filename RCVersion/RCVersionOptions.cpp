@@ -29,14 +29,14 @@ L"\nno value or evaluates to zero, the default action is taken."
 // ---------------------------------------------------------------------------
 // 
 // ---------------------------------------------------------------------------
-RCVersionOptions::RCVersionOptions(PRINT_PROC PrintProc)
-	: errorDetected(false)
-	, majorVersion(-1)
-	, minorVersion(-1)
-	, buildNumber(-1)
-	, revision(-1)
-	, verbose(true)
-	, Print(PrintProc)
+RCVersionOptions::RCVersionOptions(ILogger &rlogger)
+   : errorDetected(false)
+   , majorVersion(-1)
+   , minorVersion(-1)
+   , buildNumber(-1)
+   , revision(-1)
+   , verbose(true)
+   , logger(rlogger)
 {
 }
 
@@ -44,22 +44,23 @@ RCVersionOptions::RCVersionOptions(PRINT_PROC PrintProc)
 // ---------------------------------------------------------------------------
 // 
 // ---------------------------------------------------------------------------
-void RCVersionOptions::Error(const wchar_t* message)
+void RCVersionOptions::Log(const wchar_t* message)
 {
-	errorDetected = true;
-	if (0 != Print)
-		Print(message);
+   logger.Log(message);
 }
 
 
 // ---------------------------------------------------------------------------
 // 
 // ---------------------------------------------------------------------------
-void RCVersionOptions::Error(const wchar_t* format, const wchar_t* value)
+void RCVersionOptions::Error(const wchar_t* format, ...)
 {
-	wchar_t buffer[1024] = { 0 };
-	_snwprintf_s(buffer, _TRUNCATE, format, value);
-	Error(buffer);
+   errorDetected = true;
+   va_list vList;
+   va_start(vList, format);
+   wchar_t buffer[1024] = { 0 };
+   _vsnwprintf_s(buffer, _TRUNCATE, format, vList);
+   Log(buffer);
 }
 
 
@@ -68,14 +69,14 @@ void RCVersionOptions::Error(const wchar_t* format, const wchar_t* value)
 // ---------------------------------------------------------------------------
 int RCVersionOptions::NumericOption(const wchar_t* value)
 {
-	wchar_t* tail = nullptr;
-	int result = wcstoul(value, &tail, 10);
+   wchar_t* tail = nullptr;
+   int result = wcstoul(value, &tail, 10);
 
-	if (0 == *tail)
-		return int(result);
+   if (0 == *tail)
+      return int(result);
 
-	Error(L"*** Invalid option value: [%s]", value);
-	return -1;
+   Error(L"*** Invalid option value: [%s]", value);
+   return -1;
 }
 
 
@@ -84,14 +85,14 @@ int RCVersionOptions::NumericOption(const wchar_t* value)
 // ---------------------------------------------------------------------------
 std::wstring RCVersionOptions::PathOption(const wchar_t* value)
 {
-	if (!value || !*value)
-		return std::wstring();
+   if (!value || !*value)
+      return std::wstring();
 
-	wchar_t path[1024] = { 0 };
-	if (!ExpandEnvironmentStrings(value, path, _countof(path)))
-		return value;
+   wchar_t path[1024] = { 0 };
+   if (!ExpandEnvironmentStrings(value, path, _countof(path)))
+      return value;
 
-	return path;
+   return path;
 }
 
 
@@ -100,67 +101,67 @@ std::wstring RCVersionOptions::PathOption(const wchar_t* value)
 // ---------------------------------------------------------------------------
 bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
 {
-	errorDetected = false;
+   errorDetected = false;
 
-	for (int nArg = 1; nArg < argc; ++nArg)
-	{
-		LPCWSTR arg = argv[nArg];
+   for (int nArg = 1; nArg < argc; ++nArg)
+   {
+      LPCWSTR arg = argv[nArg];
 
-		if (!arg || !*arg)
-			continue;
+      if (!arg || !*arg)
+         continue;
 
-		if (L'/' == *arg || L'-' == *arg)
-		{
-			wchar_t code = towlower(arg[1]);
-			bool colon = (0 != code && L':' == arg[2]);
-			const wchar_t* value = colon ? &arg[3] : 0;
-			//wchar_t* tail = nullptr;
+      if (L'/' == *arg || L'-' == *arg)
+      {
+         wchar_t code = towlower(arg[1]);
+         bool colon = (0 != code && L':' == arg[2]);
+         const wchar_t* value = colon ? &arg[3] : 0;
+         //wchar_t* tail = nullptr;
 
-			if (!value)
-			{
-				Error(L"*** Invalid option format: [%s]", arg);
-				continue;
-			}
+         if (!value)
+         {
+            Error(L"*** Invalid option format: [%s]", arg);
+            continue;
+         }
 
-			switch (code)
-			{
-			case L'm':
-				if (*value)
-					majorVersion = NumericOption(value);
-				break;
-			case L'n':
-				if (*value)
-					minorVersion = NumericOption(value);
-				break;
-			case L'b':
-				if (*value)
-					buildNumber = NumericOption(value);
-				break;
-			case L'r':
-				if (*value)
-					revision = NumericOption(value);
-				break;
-			case L'o':
-				outputFile = PathOption(value);
-				break;
-			case L'v':
-				verbose = 0 != NumericOption(value);
-				break;
-			default:
-				Error(L"*** Unknown option: [%s]", arg);
-				break;
-			}
-		}
-		else
-		{
-			if (inputFile.empty())
-				inputFile = PathOption(arg);
-			else
-				Error(L"*** Input file already defined, unexpected argument: [%s]", arg);
-		}
-	}
+         switch (code)
+         {
+         case L'm':
+            if (*value)
+               majorVersion = NumericOption(value);
+            break;
+         case L'n':
+            if (*value)
+               minorVersion = NumericOption(value);
+            break;
+         case L'b':
+            if (*value)
+               buildNumber = NumericOption(value);
+            break;
+         case L'r':
+            if (*value)
+               revision = NumericOption(value);
+            break;
+         case L'o':
+            outputFile = PathOption(value);
+            break;
+         case L'v':
+            verbose = 0 != NumericOption(value);
+            break;
+         default:
+            Error(L"*** Unknown option: [%s]", arg);
+            break;
+         }
+      }
+      else
+      {
+         if (inputFile.empty())
+            inputFile = PathOption(arg);
+         else
+            Error(L"*** Input file already defined as: [%s], unexpected argument: [%s]", inputFile.c_str(), arg);
+      }
+   }
 
-	return !errorDetected;
+   return !errorDetected;
 }
 
 
@@ -169,16 +170,16 @@ bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
 // ---------------------------------------------------------------------------
 bool RCVersionOptions::Validate()
 {
-	if (inputFile.empty())
-		Error(L"*** Missing 'input file' parameter.");
-	if (outputFile.empty())
-		outputFile = inputFile;
+   if (inputFile.empty())
+      Error(L"*** Missing 'input file' parameter.");
+   if (outputFile.empty())
+      outputFile = inputFile;
 
-	if (errorDetected)
-		return false;
+   if (errorDetected)
+      return false;
 
-	if (INVALID_FILE_ATTRIBUTES == GetFileAttributes(inputFile.c_str()))
-		Error(L"*** Cannot access file [%s]", inputFile.c_str());
+   if (INVALID_FILE_ATTRIBUTES == GetFileAttributes(inputFile.c_str()))
+      Error(L"*** Cannot access file [%s]", inputFile.c_str());
 
-	return !errorDetected;
+   return !errorDetected;
 }

@@ -5,7 +5,7 @@
 // ---------------------------------------------------------------------------
 // 
 // ---------------------------------------------------------------------------
-RCFileUpdater::RCFileUpdater(PRINT_PROC PrintProc)
+RCFileUpdater::RCFileUpdater(ILogger &rlogger)
 	: bufferData(nullptr)
 	, bufferSize(0)
 	, bufferChars(0)
@@ -15,7 +15,7 @@ RCFileUpdater::RCFileUpdater(PRINT_PROC PrintProc)
 	, buildNumber(0)
 	, revision(0)
 	, verbose(false)
-	, Print(PrintProc)
+	, logger(rlogger)
 {
 }
 
@@ -36,8 +36,7 @@ bool RCFileUpdater::Error(DWORD code, const wchar_t* message)
 	errorCode = code;
 	errorMessage = message;
 	SetLastError(errorCode);
-	if (0 != Print)
-		Print(message);
+   logger.Log(message);
 	return false;
 }
 

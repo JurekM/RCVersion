@@ -1,4 +1,5 @@
 #pragma once
+#include "ILogger.h"
 #include "trim.h"
 
 class RCFileUpdater
@@ -21,8 +22,7 @@ public:
 	std::wstring inputFile;
 	std::wstring outputFile;
 
-	typedef void(*PRINT_PROC)(const wchar_t* message);
-	PRINT_PROC Print;
+	ILogger &logger;
 
 	void Message(const wchar_t* format, ...) const
 	{
@@ -30,8 +30,7 @@ public:
 		va_start(vList, format);
 		wchar_t buffer[1024] = { 0 };
 		_vsnwprintf_s(buffer, _TRUNCATE, format, vList);
-		if (0 != Print)
-			Print(buffer);
+      logger.Log(buffer);
 	}
 
 	// Always return 'false' - allows simpler error handling code
@@ -47,7 +46,7 @@ public:
 	int Update(char* text, size_t chars, const char* name, const char* value, const char* title) const;
 	static bool Replace(char* oldText, size_t oldLength, const char* newText, size_t bufferLength);
 
-	RCFileUpdater(PRINT_PROC PrintProc);
+	RCFileUpdater(ILogger &rlogger);
 	~RCFileUpdater(void);
 
 	bool Load();
