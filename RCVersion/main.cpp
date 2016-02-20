@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "RCVersionOptions.h"
 #include "RCFileUpdater.h"
+#include "RCFileHandler.h"
 
 static const wchar_t szTitle[] = L"RCVersion - Modify version number in a resource RC file";
 
@@ -35,25 +36,30 @@ int _tmain(int argc, _TCHAR* argv[])
       return ERROR_INVALID_PARAMETER;
    }
 
-   RCFileUpdater updater(logger);
+   RCFileHandler handler(logger);
+   handler.UpdateFile(options.inputFile.c_str(), options.outputFile.c_str(), options.majorVersion, options.minorVersion, options.buildNumber, options.revision);
 
-   updater.majorVersion = options.majorVersion;
-   updater.minorVersion = options.minorVersion;
-   updater.buildNumber = options.buildNumber;
-   updater.revision = options.revision;
-   updater.inputFile = options.inputFile;
-   updater.outputFile = options.outputFile;
-   updater.verbose = verbose;
+   //RCFileUpdater updater(logger);
 
-   bool ok = updater.UpdateFile();
+   //updater.majorVersion = options.majorVersion;
+   //updater.minorVersion = options.minorVersion;
+   //updater.buildNumber = options.buildNumber;
+   //updater.revision = options.revision;
+   //updater.inputFile = options.inputFile;
+   //updater.outputFile = options.outputFile;
+   //updater.verbose = verbose;
 
-   if (verbose)
-      wprintf(L"\n");
+   //bool ok = updater.UpdateFile();
 
-   if (ok)
-      return 0;
+   //if (verbose)
+   //   wprintf(L"\n");
 
-   wprintf(L"\nFile [%s] update failed, error: %u [0x%08X] %s\n", updater.inputFile.c_str(), updater.errorCode, updater.errorCode, updater.errorMessage.c_str());
+   //if (ok)
+   //   return 0;
 
-   return updater.errorCode ? updater.errorCode : 1;
+   //wprintf(L"\nFile [%s] update failed, error: %u [0x%08X] %s\n", updater.inputFile.c_str(), updater.errorCode, updater.errorCode, updater.errorMessage.c_str());
+
+   //return updater.errorCode ? updater.errorCode : 1;
+
+   printf("\nDone.\n");
 }
