@@ -13,6 +13,16 @@ public:
    {
    }
 
+   MessageBuffer(const wchar_t* text)
+   {
+      buffer = text;
+   }
+
+   MessageBuffer(const char* text)
+   {
+      append(text);
+   }
+
    virtual ~MessageBuffer()
    {
    }
@@ -25,6 +35,17 @@ public:
    const wchar_t* message() const
    {
       return buffer.c_str();
+   }
+
+   void set(const wchar_t* text)
+   {
+      buffer = text;
+   }
+
+   void set(const char* text)
+   {
+      buffer.clear();
+      append(text);
    }
 
    void append(const wchar_t *text)

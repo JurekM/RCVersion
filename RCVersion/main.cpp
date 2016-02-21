@@ -1,22 +1,21 @@
 // RCVersion.cpp : Defines the entry point for the console application.
 #include "stdafx.h"
 #include "RCVersionOptions.h"
-#include "RCFileUpdater.h"
 #include "RCFileHandler.h"
 
 static const wchar_t szTitle[] = L"RCVersion - Modify version number in a resource RC file";
 
-class Logger : public ILogger
+class ConsoleLogger : public ILogger
 {
    void Log(const wchar_t* message) override
    {
-      wprintf(L"\n%s", message);
+      wprintf(L"%s\n", message);
    }
 };
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-   Logger logger;
+   ConsoleLogger logger;
 
    bool verbose = true;
    for (int n = 1; n < argc; ++n)
@@ -38,21 +37,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
    RCFileHandler handler(logger);
    handler.UpdateFile(options.inputFile.c_str(), options.outputFile.c_str(), options.majorVersion, options.minorVersion, options.buildNumber, options.revision);
-
-   //RCFileUpdater updater(logger);
-
-   //updater.majorVersion = options.majorVersion;
-   //updater.minorVersion = options.minorVersion;
-   //updater.buildNumber = options.buildNumber;
-   //updater.revision = options.revision;
-   //updater.inputFile = options.inputFile;
-   //updater.outputFile = options.outputFile;
-   //updater.verbose = verbose;
-
-   //bool ok = updater.UpdateFile();
-
-   //if (verbose)
-   //   wprintf(L"\n");
 
    //if (ok)
    //   return 0;

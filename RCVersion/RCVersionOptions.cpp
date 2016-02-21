@@ -7,22 +7,21 @@
 // ---------------------------------------------------------------------------
 const wchar_t RCVersionOptions::Help[] =
 L"\nSyntax: RCVersion <resource-file.rc> [<options>]"
-L"\n /b:<build-number>  new build number, default: increment by one"
 L"\n /m:<major-version> new major version, default: unchanged"
 L"\n /n:<minor-version> new minor version, default: unchanged"
-L"\n /r:<revision>      new revision number, default: 0"
+L"\n /b:<build-number>  new build number, default: increment by one"
+L"\n /r:<revision>      new revision number, default: unchanged"
 L"\n /o:<output-file>   output file path, default: same as input"
-L"\n /v:{0|1}           verbose, default on"
+L"\n /v:{0|1}           verbose, default off"
 L"\n"
 L"\n"
 L"\nThis command locates and modifies FILEVERSION and PRODUCTVERSION resources"
 L"\nin a standard Windows RC file. Resource must consist of four parts separated"
 L"\nby commans or periods. The default behaviour is to increment the build number,"
-L"\nkeep the major and minur version number and reset the revision to zero."
+L"\nkeep the major and minor version and revision numbers."
 L"\nThe primary intended use of this command is in C++ project build. The '/b:'"
 L"\nparameter is meant to be set to, for example, source control sequence number"
-L"\nwhich provides increasing, unique version numbers. If the '/b:' parameter has"
-L"\nno value or evaluates to zero, the default action is taken."
+L"\nwhich provides increasing, unique version numbers."
 ;
 
 
@@ -35,7 +34,7 @@ RCVersionOptions::RCVersionOptions(ILogger &rlogger)
    , minorVersion(-1)
    , buildNumber(-1)
    , revision(-1)
-   , verbose(true)
+   , verbose(false)
    , logger(rlogger)
 {
 }
@@ -44,7 +43,7 @@ RCVersionOptions::RCVersionOptions(ILogger &rlogger)
 // ---------------------------------------------------------------------------
 // 
 // ---------------------------------------------------------------------------
-void RCVersionOptions::Log(const wchar_t* message)
+void RCVersionOptions::Log(const wchar_t* message) const
 {
    logger.Log(message);
 }

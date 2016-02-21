@@ -58,7 +58,14 @@ class RCUpdater
 public:
    enum KTYPE { kSkip, kFixed, kString };
 
-   RCUpdater()
+   ILogger &logger;
+   bool verbose;
+   bool debug;
+
+   RCUpdater(ILogger &rlogger)
+      : logger(rlogger)
+      , verbose(false)
+      , debug(false)
    {
    }
 
@@ -156,7 +163,20 @@ public:
 
    static bool replace(charT *buffer, size_t totalChars, size_t oldChars, const charT* newString)
    {
-      return false;
+      size_t newChars = traitsT::length(newString);
+      if (oldChars < newChars)
+      {
+         size_t oldTail = traitsT::length(buffer + oldChars);
+         if (totalChars <= oldTail + newChars)
+            return false;
+         traitsT::move(buffer + newChars, buffer + oldChars, oldTail + 1);
+      }
+      else if (newChars < oldChars)
+      {
+         traitsT::move(buffer + newChars, buffer + oldChars, traitsT::length(buffer + oldChars) + 1);
+      }
+      traitsT::copy(buffer, newString, newChars);
+      return true;
    }
 
    // The next line after VERSIONINFO or zero if not found
@@ -187,13 +207,13 @@ public:
       return 0;
    }
 
-   void FindVersionStrings(charT *buffer, std::vector<size_t> &offsets)
+   void FindVersionStrings(charT *buffer, size_t start, std::vector<size_t> &offsets)
    {
       static const charT space[] = { ' ', '\t', 0 };
       static const charT chaff[] = { ',',  ' ', '\t', 0 };
       static const charT **keywords = GetKeywordTable<charT>();
 
-      charT *line = buffer;
+      charT *line = buffer + start;
       while (*line)
       {
          line = LTrim(line, space);
@@ -221,15 +241,14 @@ public:
             if (' ' < line[length])
                continue;
 
+            line = LTrim(line, space);
             found = true;
-            MessageBuffer msg;
-            msg.append(keyword);
-            wprintf(L"\nFOUND: [%c]:%s", wchar_t(code), msg.message());
+            wprintf(L"FOUND: [%c]:%s offset=%u\n", wchar_t(code), MessageBuffer(keyword).message(), unsigned(line - buffer));
 
             // FIXEDFILEINFO keyword, version follows after space
             if ('-' == code)
             {
-               line = LTrim(line, space);
+               line = LTrim(line + length, space);
                size_t offset = line - buffer;
                offsets.push_back(offset);
                break;
@@ -256,9 +275,8 @@ public:
                   if (charT('\"') == *line)
                      ++line;
 
-                  MessageBuffer msg;
-                  msg.append(name);
-                  wprintf(L"\nFOUND NAME: [%s]", msg.message());
+                  line = LTrim(line, space);
+                  wprintf(L"FOUND NAME: [%s] offset=%u\n", MessageBuffer(name).message(), unsigned(line - buffer));
                   size_t offset = line - buffer;
                   offsets.push_back(offset);
                   break;
@@ -293,7 +311,7 @@ public:
          return 0;
 
       std::vector<size_t> offsets;
-      FindVersionStrings(buffer + start, offsets);
+      FindVersionStrings(buffer, start, offsets);
 
       if (0 == offsets.size())
          return 0;
@@ -307,9 +325,8 @@ public:
          int major = -1, minor = -1, build = -1, revision = -1;
          if (!parse(buffer + offset, &tail, major, minor, build, revision))
          {
-            MessageBuffer msg;
-            msg.append(std::basic_string<charT>(buffer + offset, tail).c_str());
-            wprintf(L"\nVersion parsing failed for [%s] at char [%c]", msg.message(), wchar_t(*tail));
+            MessageBuffer msg(std::basic_string<charT>(buffer + offset, tail).c_str());
+            wprintf(L"Version parsing failed for [%s] at char [%c]\n", msg.message(), wchar_t(*tail));
             success = false;
             continue;
          }
@@ -323,7 +340,7 @@ public:
 
          if (!format(newVersion, _countof(newVersion), major, minor, build, revision))
          {
-            wprintf(L"\nVersion formatting failed for [%d,%d,%d,%d]", major, minor, build, revision);
+            wprintf(L"Version formatting failed for [%d,%d,%d,%d]\n", major, minor, build, revision);
             success = false;
             continue;
          }
@@ -334,7 +351,7 @@ public:
             msg1.append(std::basic_string<charT>(buffer + offset, tail).c_str());
             MessageBuffer msg2;
             msg2.append(newVersion);
-            wprintf(L"Version replace failed for [%s] / [%s]", msg1.message(), msg2.message());
+            wprintf(L"Version replace failed for [%s] / [%s]\n", msg1.message(), msg2.message());
             success = false;
             continue;
          }
