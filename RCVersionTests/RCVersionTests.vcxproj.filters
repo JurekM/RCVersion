@@ -21,6 +21,9 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestLogger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -32,7 +35,7 @@
     <ClCompile Include="OptionsTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UpdaterTests.cpp">
+    <ClCompile Include="HelperTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

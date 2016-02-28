@@ -1,63 +1,64 @@
 #pragma once
 #include <locale>
+#include <windows.h>
 
-inline const char* LTrim(const char* text)
-{
-	while (0 != *text && isspace(unsigned char(*text)))
-		++text;
-	return text;
-}
+//inline const char* LTrim(const char* text)
+//{
+//	while (0 != *text && isspace(*text))
+//		++text;
+//	return text;
+//}
+//
+//inline char* LTrim(char* text)
+//{
+//	while (0 != *text && isspace(*text))
+//		++text;
+//	return text;
+//}
 
-inline char* LTrim(char* text)
+inline const wchar_t* LTrim(const wchar_t* text, const wchar_t* chaff)
 {
-	while (0 != *text && isspace(unsigned char(*text)))
-		++text;
-	return text;
-}
-
-inline LPCWSTR LTrim(LPCWSTR psz, LPCWSTR chaff)
-{
-	while (*psz) {
+	while (*text) {
 		bool bTrimmed = false;
 		for (LPCWSTR c = chaff; *c; ++c) {
-			if (*psz == *c) {
+			if (*text == *c) {
 				bTrimmed = true;
-				++psz;
+				++text;
 				break;
 			}
 		}
 		if (!bTrimmed)
 			break;
 	}
-	return psz;
+	return text;
 }
 
-inline LPWSTR LTrim(LPWSTR psz, LPCWSTR chaff)
+inline wchar_t* LTrim(wchar_t* text, const wchar_t* chaff)
 {
-	LPCWSTR ptr = LTrim(const_cast<LPCWSTR>(psz), chaff);
+	LPCWSTR ptr = LTrim(const_cast<LPCWSTR>(text), chaff);
 	return const_cast<LPWSTR>(ptr);
 }
 
-inline LPCSTR LTrim(LPCSTR psz, LPCSTR chaff)
+inline const char* LTrim(const char* text, const char* chaff)
 {
-	while (*psz) {
+	while (*text) {
 		bool bTrimmed = false;
-		for (LPCSTR c = chaff; *c; ++c) {
-			if (*psz == *c) {
+		for (const char*  c = chaff; *c; ++c) {
+			if (*text == *c) {
 				bTrimmed = true;
-				++psz;
+				++text;
 				break;
 			}
 		}
 		if (!bTrimmed)
 			break;
 	}
-	return psz;
+	return text;
 }
 
-inline LPSTR LTrim(LPSTR psz, LPCSTR chaff)
+inline char* LTrim(char* text, const char* chaff)
 {
-	LPCSTR ptr = LTrim(const_cast<LPCSTR>(psz), chaff);
+	LPCSTR ptr = LTrim(const_cast<LPCSTR>(text), chaff);
 	return const_cast<LPSTR>(ptr);
 }
 
@@ -88,14 +89,14 @@ inline char* SkipString(char* text)
 
 inline const char* SkipWord(const char* text)
 {
-	while (0 != *text && !isspace(unsigned char(*text)))
+	while (0 != *text && !isspace(*text))
 		++text;
 	return text;
 }
 
 inline char* SkipWord(char* text)
 {
-	while (0 != *text && !isspace(unsigned char(*text)))
+	while (0 != *text && !isspace(*text))
 		++text;
 	return text;
 }

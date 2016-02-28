@@ -1,17 +1,7 @@
 #include "stdafx.h"
-#include "..\RCVersion\RCVersionOptions.h"
+#include "RCVersionOptions.h"
+#include "TestLogger.h"
 
-
-class Logger : public ILogger
-{
-public:
-   std::wstring messages;
-   void Log(const wchar_t* message) override
-   {
-      messages.append(message);
-      messages.append(L"\r\n");
-   }
-};
 
 // L"\nSyntax: RCVersion <resource-file.rc> [<options>]"
 // L"\n /b:<build-number>  new build number, default: increment by one"
@@ -25,7 +15,7 @@ public:
 
 TEST(RCVersionOptions, AllOptions1)
 {
-   Logger logger;
+   TestLogger logger;
    RCVersionOptions vo(logger);
 
    wchar_t* argv[] = {
@@ -53,7 +43,7 @@ TEST(RCVersionOptions, AllOptions1)
 
 TEST(RCVersionOptions, AllOptions2)
 {
-   Logger logger;
+   TestLogger logger;
    RCVersionOptions vo(logger);
 
    wchar_t* argv[] = {
@@ -80,7 +70,7 @@ TEST(RCVersionOptions, AllOptions2)
 
 TEST(RCVersionOptions, MinimumOptions)
 {
-   Logger logger;
+   TestLogger logger;
    RCVersionOptions vo(logger);
 
    wchar_t* argv[] = {
@@ -94,14 +84,14 @@ TEST(RCVersionOptions, MinimumOptions)
    EXPECT_EQ(-1, vo.minorVersion);
    EXPECT_EQ(-1, vo.buildNumber);
    EXPECT_EQ(-1, vo.revision);
-   EXPECT_TRUE(vo.verbose);
+   EXPECT_FALSE(vo.verbose);
    EXPECT_EQ(L"..\\test-in.rc", vo.outputFile);
    EXPECT_EQ(L"..\\test-in.rc", vo.inputFile);
 }
 
 TEST(RCVersionOptions, BadOptions)
 {
-   Logger logger;
+   TestLogger logger;
    RCVersionOptions vo(logger);
 
    wchar_t* argv[] = {
@@ -118,7 +108,7 @@ TEST(RCVersionOptions, BadOptions)
 
 TEST(RCVersionOptions, DuplicateFileName)
 {
-   Logger logger;
+   TestLogger logger;
    RCVersionOptions vo(logger);
 
    wchar_t* argv[] = {
@@ -134,7 +124,7 @@ TEST(RCVersionOptions, DuplicateFileName)
 
 TEST(RCVersionOptions, MissingFileName)
 {
-   Logger logger;
+   TestLogger logger;
    RCVersionOptions vo(logger);
 
    wchar_t* argv[] = {
