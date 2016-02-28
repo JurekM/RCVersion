@@ -2,19 +2,19 @@
 #include <locale>
 #include <windows.h>
 
-inline const char* LTrim(const char* text)
-{
-	while (0 != *text && isspace(*text))
-		++text;
-	return text;
-}
-
-inline char* LTrim(char* text)
-{
-	while (0 != *text && isspace(*text))
-		++text;
-	return text;
-}
+//inline const char* LTrim(const char* text)
+//{
+//	while (0 != *text && isspace(*text))
+//		++text;
+//	return text;
+//}
+//
+//inline char* LTrim(char* text)
+//{
+//	while (0 != *text && isspace(*text))
+//		++text;
+//	return text;
+//}
 
 inline const wchar_t* LTrim(const wchar_t* text, const wchar_t* chaff)
 {
