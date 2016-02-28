@@ -8,8 +8,6 @@ RCFileHandler::RCFileHandler(ILogger &rlogger)
    : ilogger(rlogger)
    , logger(rlogger)
    , verbose(false)
-   , linesLogged(0)
-   , linesErrors(0)
 {
 }
 
@@ -45,6 +43,13 @@ bool RCFileHandler::UpdateFile(const wchar_t *inpath, const wchar_t *outpath, in
    }
 
    logger.Log(L"%u changes made to [%s], writing file [%s].", changes, NN(inpath), NN(outpath));
+   unsigned outBytes = unsigned(isUnicode ? wcslen(static_cast<wchar_t*>(buffer))*sizeof(wchar_t) : strlen(static_cast<char*>(buffer))*sizeof(char));
+
+   if (!SaveFile(outpath, buffer, outBytes))
+   {
+      logger.Error(GetLastError(), L"Cannot write file [%s].", NN(outpath));
+      return false;
+   }
 
    return true;
 }
@@ -104,5 +109,29 @@ bool RCFileHandler::LoadFile(const wchar_t* path, size_t padding, void* &buffer,
 
    *(0 + readBytes + static_cast<char*>(buffer)) = 0;
    *(1 + readBytes + static_cast<char*>(buffer)) = 0;
+   return true;
+}
+
+// ---------------------------------------------------------------------------
+// 
+// ---------------------------------------------------------------------------
+bool RCFileHandler::SaveFile(const wchar_t* path, void* buffer, size_t bytes)
+{
+   if (!path || !*path)
+      return logger.Error(ERROR_INVALID_PARAMETER, L"*** RCFileUpdater::Save: Output file path must not be empty.");
+
+   HANDLE hFile = CreateFile(path, GENERIC_READ|GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_DELETE, nullptr, CREATE_ALWAYS, 0, nullptr);
+   if (INVALID_HANDLE_VALUE == hFile)
+      return logger.Error(GetLastError(), L"*** RCFileUpdater::Load: Cannot open output file", path);
+
+   AutoHClose ahc(hFile);
+
+   DWORD writeBytes = 0;
+   BOOL ok = WriteFile(hFile, buffer, DWORD(bytes), &writeBytes, nullptr);
+   if (!ok || bytes != writeBytes)
+   {
+      return logger.Error(GetLastError(), L"*** RCFileUpdater::Load: Cannot write output file", path);
+   }
+
    return true;
 }

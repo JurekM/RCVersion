@@ -243,7 +243,8 @@ public:
 
             line = LTrim(line, space);
             found = true;
-            wprintf(L"FOUND: [%c]:%s offset=%u\n", wchar_t(code), MessageBuffer(keyword).message(), unsigned(line - buffer));
+            if (verbose)
+               wprintf(L"FOUND: [%c]:%s offset=%u\n", wchar_t(code), MessageBuffer(keyword).message(), unsigned(line - buffer));
 
             // FIXEDFILEINFO keyword, version follows after space
             if ('-' == code)
@@ -276,7 +277,8 @@ public:
                      ++line;
 
                   line = LTrim(line, space);
-                  wprintf(L"FOUND NAME: [%s] offset=%u\n", MessageBuffer(name).message(), unsigned(line - buffer));
+                  if (verbose)
+                     wprintf(L"FOUND NAME: [%s] offset=%u\n", MessageBuffer(name).message(), unsigned(line - buffer));
                   size_t offset = line - buffer;
                   offsets.push_back(offset);
                   break;

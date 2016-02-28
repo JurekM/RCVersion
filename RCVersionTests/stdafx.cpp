@@ -4,3 +4,4 @@
 #pragma comment(lib, "gtest_main.lib")
 
 #include "RCVersionOptions.cpp"
+#include "RCFileHandler.cpp"

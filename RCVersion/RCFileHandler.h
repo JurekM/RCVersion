@@ -8,13 +8,12 @@ protected:
    Logger logger;
    bool verbose;
 
-   unsigned linesLogged;
-   unsigned linesErrors;
 public:
    RCFileHandler(ILogger &rlogger);
    virtual ~RCFileHandler();
 
    bool LoadFile(const wchar_t* path, size_t padding, void* &buffer, size_t &bytes);
+   bool SaveFile(const wchar_t* path, void* buffer, size_t bytes);
 
    bool UpdateFile(const wchar_t *inpath, const wchar_t *outpath, int major, int minor, int build, int revision);
 

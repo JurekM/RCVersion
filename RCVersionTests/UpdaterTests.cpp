@@ -1,5 +1,7 @@
 #include "stdafx.h"
-#include "..\RCVersion\RCFileUpdater.h"
+#include "RCFileHandler.h"
+#include <ILogger.h>
+#include "TestLogger.h"
 
 class AutoDeleteFiles
 {
@@ -18,17 +20,6 @@ public:
       }
    }
 
-};
-
-class Logger : public ILogger
-{
-public:
-   std::wstring messages;
-   void Log(const wchar_t* message) override
-   {
-      messages.append(message);
-      messages.append(L"\r\n");
-   }
 };
 
 TEST(RCFileUpdater, UpdateWcharFileWithBom)
@@ -53,25 +44,25 @@ TEST(RCFileUpdater, UpdateWcharFileWithBom)
       L"\r\nEND"
       L"\r\n"
       ;
-   char after[] =
-      "\xEF\xBB\xBF"
-      "// Example resource file with BOM"
-      "\r\n// Some non-ASCII characters: |\xC4\x85\xC4\x87\xC4\x99\xC5\x82\xC5\x84\xC3\xB3\xC5\x9B|"
-      "\r\n"
-      "\r\nVS_VERSION_INFO VERSIONINFO"
-      "\r\nFILEVERSION 12, 23, 345, 45"
-      "\r\nPRODUCTVERSION 12, 23, 345, 45"
-      "\r\nBEGIN"
-      "\r\nBLOCK \"StringFileInfo\""
-      "\r\nBEGIN"
-      "\r\nBLOCK \"040904b0\""
-      "\r\nBEGIN"
-      "\r\nVALUE \"FileVersion\", \"12, 23, 345, 45\""
-      "\r\nVALUE \"InternalName\", \"TestFile\""
-      "\r\nVALUE \"ProductVersion\", \"12, 23, 345, 45\""
-      "\r\nEND"
-      "\r\nEND"
-      "\r\n"
+   wchar_t after[] =
+      L"\xFEFF"
+      L"// Example resource file with BOM"
+      L"\r\n// Some non-ASCII characters: |\x0105\x0107\x0119\x0142\x0144\x00F3\x015B|"
+      L"\r\n"
+      L"\r\nVS_VERSION_INFO VERSIONINFO"
+      L"\r\nFILEVERSION 12, 23, 345, 45"
+      L"\r\nPRODUCTVERSION 12, 23, 345, 45"
+      L"\r\nBEGIN"
+      L"\r\nBLOCK \"StringFileInfo\""
+      L"\r\nBEGIN"
+      L"\r\nBLOCK \"040904b0\""
+      L"\r\nBEGIN"
+      L"\r\nVALUE \"FileVersion\", \"12, 23, 345, 45\""
+      L"\r\nVALUE \"InternalName\", \"TestFile\""
+      L"\r\nVALUE \"ProductVersion\", \"12, 23, 345, 45\""
+      L"\r\nEND"
+      L"\r\nEND"
+      L"\r\n"
       ;
 
    wchar_t temp[MAX_PATH+1] = { 0 };
@@ -84,19 +75,19 @@ TEST(RCFileUpdater, UpdateWcharFileWithBom)
    fwrite(before, 1, sizeof(before) - sizeof(before[0]), ofile);
    fclose(ofile);
 
-   Logger logger;
-   RCFileUpdater updater(logger);
-   updater.majorVersion = 12;
-   updater.minorVersion = 23;
-   updater.buildNumber = 345;
-   updater.revision = 45;
-   updater.inputFile = temp;
-   updater.outputFile = temp;
-   updater.verbose = false;
+   TestLogger logger;
+   RCFileHandler updater(logger);
+   //updater.majorVersion = 12;
+   //updater.minorVersion = 23;
+   //updater.buildNumber = 345;
+   //updater.revision = 45;
+   //updater.inputFile = temp;
+   //updater.outputFile = temp;
+   //updater.verbose = false;
 
-   EXPECT_TRUE(updater.UpdateFile());
+   EXPECT_TRUE(updater.UpdateFile(temp, temp, 12, 23, 345, 45));
 
-   char buffer[sizeof(after) + 256] = { 0 };
+   wchar_t buffer[_countof(after) + 256] = { 0 };
    FILE*ifile = _wfopen(temp, L"rb");
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
@@ -125,25 +116,26 @@ TEST(RCFileUpdater, UpdateWcharFileWithNoBom)
       L"\r\nEND"
       L"\r\n"
       ;
-   char after[] =
-      "// Example resource file with no BOM"
-      "\r\n// Some non-ASCII characters: |\xC4\x85\xC4\x87\xC4\x99\xC5\x82\xC5\x84\xC3\xB3\xC5\x9B|"
-      "\r\n"
-      "\r\nVS_VERSION_INFO VERSIONINFO"
-      "\r\nFILEVERSION 12, 23, 345, 45"
-      "\r\nPRODUCTVERSION 12, 23, 345, 45"
-      "\r\nBEGIN"
-      "\r\nBLOCK \"StringFileInfo\""
-      "\r\nBEGIN"
-      "\r\nBLOCK \"040904b0\""
-      "\r\nBEGIN"
-      "\r\nVALUE \"FileVersion\", \"12, 23, 345, 45\""
-      "\r\nVALUE \"InternalName\", \"TestFile\""
-      "\r\nVALUE \"ProductVersion\", \"12, 23, 345, 45\""
-      "\r\nEND"
-      "\r\nEND"
-      "\r\n"
+   wchar_t after[] =
+      L"// Example resource file with no BOM"
+      L"\r\n// Some non-ASCII characters: |\x0105\x0107\x0119\x0142\x0144\x00F3\x015B|"
+      L"\r\n"
+      L"\r\nVS_VERSION_INFO VERSIONINFO"
+      L"\r\nFILEVERSION 12, 23, 345, 45"
+      L"\r\nPRODUCTVERSION 12, 23, 345, 45"
+      L"\r\nBEGIN"
+      L"\r\nBLOCK \"StringFileInfo\""
+      L"\r\nBEGIN"
+      L"\r\nBLOCK \"040904b0\""
+      L"\r\nBEGIN"
+      L"\r\nVALUE \"FileVersion\", \"12, 23, 345, 45\""
+      L"\r\nVALUE \"InternalName\", \"TestFile\""
+      L"\r\nVALUE \"ProductVersion\", \"12, 23, 345, 45\""
+      L"\r\nEND"
+      L"\r\nEND"
+      L"\r\n"
       ;
+   ;
 
    wchar_t temp[MAX_PATH + 1] = { 0 };
    GetTempFileName(L".", L"xyz", 0, temp);
@@ -155,19 +147,19 @@ TEST(RCFileUpdater, UpdateWcharFileWithNoBom)
    fwrite(before, 1, sizeof(before) - sizeof(before[0]), ofile);
    fclose(ofile);
 
-   Logger logger;
-   RCFileUpdater updater(logger);
-   updater.majorVersion = 12;
-   updater.minorVersion = 23;
-   updater.buildNumber = 345;
-   updater.revision = 45;
-   updater.inputFile = temp;
-   updater.outputFile = temp;
-   updater.verbose = false;
+   TestLogger logger;
+   RCFileHandler updater(logger);
+   //updater.majorVersion = 12;
+   //updater.minorVersion = 23;
+   //updater.buildNumber = 345;
+   //updater.revision = 45;
+   //updater.inputFile = temp;
+   //updater.outputFile = temp;
+   //updater.verbose = false;
 
-   EXPECT_TRUE(updater.UpdateFile());
+   EXPECT_TRUE(updater.UpdateFile(temp,temp,12,23,345,45));
 
-   char buffer[sizeof(after) + 256] = { 0 };
+   wchar_t buffer[_countof(after) + 256] = { 0 };
    FILE*ifile = _wfopen(temp, L"rb");
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
