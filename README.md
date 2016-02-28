@@ -24,8 +24,8 @@ Accepted by RC.exe and accepted by RCVersion:
 
 Accepted by RC.exe but not accepted by RCVersion:
 ```
- FILEVERSION 1/* */,2, 3, 4
- FILEVERSION 1,/* */2, 3, 4
+ FILEVERSION 1/**/,2, 3, 4
+ FILEVERSION 1,/**/2, 3, 4
 ```
 
 <eof>
