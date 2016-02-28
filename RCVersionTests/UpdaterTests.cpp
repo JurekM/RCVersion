@@ -366,7 +366,7 @@ TEST(RCUpdater, formatWchar)
 
 TEST(RCUpdater, parseChar)
 {
-   int major=-1, minor=-1, build=-1, revision=-1;
+   int major = -1, minor = -1, build = -1, revision = -1;
    char* tail = nullptr;
 
    char s1[] = " \t \t 12.234,5678 . , .,. 54321 .,.,";
@@ -528,4 +528,99 @@ TEST(RCUpdater, replaceWchar)
    EXPECT_TRUE(RCUpdater<wchar_t>::replace(s9, 7, 3, L""));
    EXPECT_STREQ(L"4", s9);
    EXPECT_EQ('8', s9[7]);
+}
+
+TEST(RCUpdater, FindStartOfVersionChar)
+{
+   size_t pos = -1;
+   char s1[] =
+      "\r\n// Some non-ASCII characters: |\xC4\x85\xC4\x87\xC4\x99\xC5\x82\xC5\x84\xC3\xB3\xC5\x9B|"
+      "\r\n"
+      "\r\n // Here are some fake lines:"
+      "\r\nVERSIONINFO ABC"
+      "\r\n VERSIONINFO BCD"
+      "\r\nVS_VERSION_INFO VERSIONINFO"
+      "\r\nFILEVERSION 15,   23,3456, 891"
+      "\r\nPRODUCTVERSION 16, 24, 4567, 892"
+      "\r\nBEGIN"
+      "\r\nBLOCK \"StringFileInfo\""
+      "\r\nBEGIN"
+      ;
+   pos = RCUpdater<char>::FindStartOfVersion(s1);
+   ASSERT_NE(0, pos);
+   EXPECT_EQ('F', s1[pos + 0]);
+   EXPECT_EQ('I', s1[pos + 1]);
+   EXPECT_EQ('L', s1[pos + 2]);
+   EXPECT_EQ('E', s1[pos + 3]);
+
+   char s2[] =
+      "\r\n // Here are some fake lines:"
+      "\r\nVERSIONINFO ABC"
+      "\r\n VERSIONINFO BCD"
+      "\r\n1 VERSIONINFO"
+      "\r\n FILEVERSION 15,   23,3456, 891"
+      "\r\nPRODUCTVERSION 16, 24, 4567, 892"
+      "\r\nBEGIN"
+      "\r\nBLOCK \"StringFileInfo\""
+      "\r\nBEGIN"
+      ;
+   pos = RCUpdater<char>::FindStartOfVersion(s2);
+   ASSERT_NE(0, pos);
+   EXPECT_EQ(' ', s2[pos + 0]);
+   EXPECT_EQ('F', s2[pos + 1]);
+   EXPECT_EQ('I', s2[pos + 2]);
+   EXPECT_EQ('L', s2[pos + 3]);
+   EXPECT_EQ('E', s2[pos + 4]);
+
+   char s3[] =
+      "\r\n // Here are some fake lines:"
+      "\r\nVERSIONINFO ABC"
+      "\r\n VERSIONINFO BCD"
+      "\r\n   ABRA_KADABRA VERSIONINFO"
+      "\r\n FILEVERSION 15,   23,3456, 891"
+      "\r\nPRODUCTVERSION 16, 24, 4567, 892"
+      "\r\nBEGIN"
+      "\r\nBLOCK \"StringFileInfo\""
+      "\r\nBEGIN"
+      ;
+   pos = RCUpdater<char>::FindStartOfVersion(s3);
+   ASSERT_NE(0, pos);
+   EXPECT_EQ(' ', s3[pos + 0]);
+   EXPECT_EQ('F', s3[pos + 1]);
+   EXPECT_EQ('I', s3[pos + 2]);
+   EXPECT_EQ('L', s3[pos + 3]);
+   EXPECT_EQ('E', s3[pos + 4]);
+
+   char s4[] =
+      "// Example resource file with no BOM"
+      "\r\n\t"
+      "\r\n\tVS_VERSION_INFO VERSIONINFO"
+      "\r\n\tFILEVERSION 12, 23, 345, 45"
+      "\r\n\tPRODUCTVERSION 12, 23, 345, 45"
+      "\r\n\tBEGIN"
+      "\r\n\tBLOCK \"StringFileInfo\""
+      "\r\n\tBEGIN"
+      "\r\n\tBLOCK \"040904b0\""
+      "\r\n\tBEGIN"
+      ;
+   pos = RCUpdater<char>::FindStartOfVersion(s4);
+   ASSERT_NE(0, pos);
+   EXPECT_EQ('\t', s4[pos + 0]);
+   EXPECT_EQ('F', s4[pos + 1]);
+   EXPECT_EQ('I', s4[pos + 2]);
+   EXPECT_EQ('L', s4[pos + 3]);
+   EXPECT_EQ('E', s4[pos + 4]);
+
+   char s5[] =
+      "\r\n // Here are some fake lines:"
+      "\r\nVERSIONINFO ABC"
+      "\r\n VERSIONINFO BCD"
+      "\r\n FILEVERSION 15,   23,3456, 891"
+      "\r\nPRODUCTVERSION 16, 24, 4567, 892"
+      "\r\nBEGIN"
+      "\r\nBLOCK \"StringFileInfo\""
+      "\r\nBEGIN"
+      ;
+   pos = RCUpdater<char>::FindStartOfVersion(s5);
+   EXPECT_EQ(0, pos);
 }

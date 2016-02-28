@@ -181,9 +181,10 @@ public:
    }
 
    // The next line after VERSIONINFO or zero if not found
-   size_t FindStartOfVersion(charT *buffer)
+   static size_t FindStartOfVersion(charT *buffer)
    {
       static const charT space[] = { ' ', '\t', 0 };
+      static const charT stopper[] = { ' ', '\t', '\n', 0 };
       static const charT keyword[] = { 'V', 'E', 'R', 'S', 'I', 'O', 'N', 'I', 'N', 'F', 'O', 0 };
       size_t length = traitsT::length(keyword);
 
@@ -192,7 +193,7 @@ public:
       {
          // Skip to the keyword
          line = LTrim(line, space);
-         line = LSkipTo(line, space);
+         line = LSkipTo(line, stopper);
          line = LTrim(line, space);
 
          // Is this the space delimited keyword we need
