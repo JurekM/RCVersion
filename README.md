@@ -4,7 +4,7 @@ The intention is that you can use it in an automated build to set version from b
 
 Run with /? parameter for command line options.
 
-Example command lines:
+Example command lines, assume your build environment will replace $(SCCREVISION) with a number:
 ```
   RCVersion C:\Projects\RCVersion\RCVersion\RCVersion.rc /b:$(SCCREVISION)
   RCVersion C:\Projects\RCVersion\RCVersion\RCVersion.rc /b:$(SCCREVISION) /m:1 /n:3 /r:0
