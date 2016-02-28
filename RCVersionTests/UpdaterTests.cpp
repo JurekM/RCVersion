@@ -623,6 +623,26 @@ TEST(RCUpdater, FindStartOfVersionChar)
       ;
    pos = RCUpdater<char>::FindStartOfVersion(s5);
    EXPECT_EQ(0, pos);
+
+   char s6[] =
+      "// Example resource file with no BOM"
+      "\r\n\t"
+      "\r\n\t/* */VS_VERSION_INFO/**/VERSIONINFO/**/"
+      "\r\n\tFILEVERSION 12, 23, 345, 45"
+      "\r\n\tPRODUCTVERSION 12, 23, 345, 45"
+      "\r\n\tBEGIN"
+      "\r\n\tBLOCK \"StringFileInfo\""
+      "\r\n\tBEGIN"
+      "\r\n\tBLOCK \"040904b0\""
+      "\r\n\tBEGIN"
+      ;
+   pos = RCUpdater<char>::FindStartOfVersion(s6);
+   ASSERT_NE(0, pos);
+   EXPECT_EQ('\t', s6[pos + 0]);
+   EXPECT_EQ('F', s6[pos + 1]);
+   EXPECT_EQ('I', s6[pos + 2]);
+   EXPECT_EQ('L', s6[pos + 3]);
+   EXPECT_EQ('E', s6[pos + 4]);
 }
 
 TEST(RCUpdater, FindStartOfVersionWchar)
@@ -718,4 +738,176 @@ TEST(RCUpdater, FindStartOfVersionWchar)
       ;
    pos = RCUpdater<wchar_t>::FindStartOfVersion(s5);
    EXPECT_EQ(0, pos);
+}
+
+TEST(RCUpdater, SkipCommentChar)
+{
+   char s1[] = " text /* comment */ more text";
+   EXPECT_STREQ("text /* comment */ more text", RCUpdater<char>::SkipComment(s1 + 0));
+   EXPECT_STREQ("text /* comment */ more text", RCUpdater<char>::SkipComment(s1 + 1));
+   EXPECT_STREQ("ext /* comment */ more text", RCUpdater<char>::SkipComment(s1 + 2));
+   EXPECT_STREQ("xt /* comment */ more text", RCUpdater<char>::SkipComment(s1 + 3));
+   EXPECT_STREQ("t /* comment */ more text", RCUpdater<char>::SkipComment(s1 + 4));
+   EXPECT_STREQ("more text", RCUpdater<char>::SkipComment(s1 + 5));
+
+   char s2[] = "/*1*//*2*/text";
+   EXPECT_STREQ("/*2*/text", RCUpdater<char>::SkipComment(s2));
+
+   char s3[] =
+      " /* start on line 1"
+      "\r\ncontinued on line 2"
+      "\r\n ending on line 3 */ some text"
+      ;
+   EXPECT_STREQ("some text", RCUpdater<char>::SkipComment(s3));
+
+   char s4[] =
+      " /* start on line 1"
+      "\r\ncontinued on line 2"
+      "\r\n ending on line 3 */ "
+      "\r\n some more text"
+      ;
+   EXPECT_STREQ("\r\n some more text", RCUpdater<char>::SkipComment(s4));
+
+   char s5[] = "/*1*///2\nnew line";
+   EXPECT_STREQ("//2\nnew line", RCUpdater<char>::SkipComment(s5));
+
+   char s6[] =
+      " \t //comment"
+      "\r\n  next line"
+      ;
+   EXPECT_STREQ("  next line", RCUpdater<char>::SkipComment(s6));
+}
+
+TEST(RCUpdater, SkipCommentWchar)
+{
+   wchar_t s1[] = L" text /* comment */ more text";
+   EXPECT_STREQ(L"text /* comment */ more text", RCUpdater<wchar_t>::SkipComment(s1 + 0));
+   EXPECT_STREQ(L"text /* comment */ more text", RCUpdater<wchar_t>::SkipComment(s1 + 1));
+   EXPECT_STREQ(L"ext /* comment */ more text", RCUpdater<wchar_t>::SkipComment(s1 + 2));
+   EXPECT_STREQ(L"xt /* comment */ more text", RCUpdater<wchar_t>::SkipComment(s1 + 3));
+   EXPECT_STREQ(L"t /* comment */ more text", RCUpdater<wchar_t>::SkipComment(s1 + 4));
+   EXPECT_STREQ(L"more text", RCUpdater<wchar_t>::SkipComment(s1 + 5));
+
+   wchar_t s2[] = L"/*1*//*2*/text";
+   EXPECT_STREQ(L"/*2*/text", RCUpdater<wchar_t>::SkipComment(s2));
+
+   wchar_t s3[] =
+      L" /* start on line 1"
+      L"\r\ncontinued on line 2"
+      L"\r\n ending on line 3 */ some text"
+      ;
+   EXPECT_STREQ(L"some text", RCUpdater<wchar_t>::SkipComment(s3));
+
+   wchar_t s4[] =
+      L" /* start on line 1"
+      L"\r\ncontinued on line 2"
+      L"\r\n ending on line 3 */ "
+      L"\r\n some more text"
+      ;
+   EXPECT_STREQ(L"\r\n some more text", RCUpdater<wchar_t>::SkipComment(s4));
+
+   wchar_t s5[] = L"/*1*///2\nnew line";
+   EXPECT_STREQ(L"//2\nnew line", RCUpdater<wchar_t>::SkipComment(s5));
+
+   wchar_t s6[] =
+      L" \t //comment"
+      L"\r\n  next line"
+      ;
+   EXPECT_STREQ(L"  next line", RCUpdater<wchar_t>::SkipComment(s6));
+}
+
+TEST(RCUpdater, SkipAllCommentsChar)
+{
+   char s1[] = " text /* comment */ more text";
+   EXPECT_STREQ("text /* comment */ more text", RCUpdater<char>::SkipAllComments(s1 + 0));
+   EXPECT_STREQ("text /* comment */ more text", RCUpdater<char>::SkipAllComments(s1 + 1));
+   EXPECT_STREQ("ext /* comment */ more text", RCUpdater<char>::SkipAllComments(s1 + 2));
+   EXPECT_STREQ("xt /* comment */ more text", RCUpdater<char>::SkipAllComments(s1 + 3));
+   EXPECT_STREQ("t /* comment */ more text", RCUpdater<char>::SkipAllComments(s1 + 4));
+   EXPECT_STREQ("more text", RCUpdater<char>::SkipAllComments(s1 + 5));
+
+   char s2[] = "/*1*//*2*/text";
+   EXPECT_STREQ("text", RCUpdater<char>::SkipAllComments(s2));
+
+   char s3[] =
+      " /* start on line 1"
+      "\r\ncontinued on line 2"
+      "\r\n ending on line 3 */ some text"
+      ;
+   EXPECT_STREQ("some text", RCUpdater<char>::SkipAllComments(s3));
+
+   char s4[] =
+      " /* start on line 1"
+      "\r\ncontinued on line 2"
+      "\r\n ending on line 3 */ "
+      "\r\n some more text"
+      ;
+   EXPECT_STREQ("some more text", RCUpdater<char>::SkipAllComments(s4));
+
+   char s5[] = "/*1*///2\n  new line";
+   EXPECT_STREQ("new line", RCUpdater<char>::SkipAllComments(s5));
+
+   char s6[] =
+      " \t //comment"
+      "\r\n  next line"
+      ;
+   EXPECT_STREQ("next line", RCUpdater<char>::SkipAllComments(s6));
+
+   char s7[] =
+      " \t //comment"
+      "\r\n\t/*  \t\r\n\r\n   */"
+      "\r\n // more comments"
+      "\r\n   /* even more comments */ // ludicrous"
+      "\r\n/*number of comments*/ \t \t \r \n \r \n "
+      "\r\n  finally text"
+      ;
+   EXPECT_STREQ("finally text", RCUpdater<char>::SkipAllComments(s7));
+}
+
+TEST(RCUpdater, SkipAllCommentsWchar)
+{
+   wchar_t s1[] = L" text /* comment */ more text";
+   EXPECT_STREQ(L"text /* comment */ more text", RCUpdater<wchar_t>::SkipAllComments(s1 + 0));
+   EXPECT_STREQ(L"text /* comment */ more text", RCUpdater<wchar_t>::SkipAllComments(s1 + 1));
+   EXPECT_STREQ(L"ext /* comment */ more text", RCUpdater<wchar_t>::SkipAllComments(s1 + 2));
+   EXPECT_STREQ(L"xt /* comment */ more text", RCUpdater<wchar_t>::SkipAllComments(s1 + 3));
+   EXPECT_STREQ(L"t /* comment */ more text", RCUpdater<wchar_t>::SkipAllComments(s1 + 4));
+   EXPECT_STREQ(L"more text", RCUpdater<wchar_t>::SkipAllComments(s1 + 5));
+
+   wchar_t s2[] = L"/*1*//*2*/text";
+   EXPECT_STREQ(L"text", RCUpdater<wchar_t>::SkipAllComments(s2));
+
+   wchar_t s3[] =
+      L" /* start on line 1"
+      L"\r\ncontinued on line 2"
+      L"\r\n ending on line 3 */ some text"
+      ;
+   EXPECT_STREQ(L"some text", RCUpdater<wchar_t>::SkipAllComments(s3));
+
+   wchar_t s4[] =
+      L" /* start on line 1"
+      L"\r\ncontinued on line 2"
+      L"\r\n ending on line 3 */ "
+      L"\r\n some more text"
+      ;
+   EXPECT_STREQ(L"some more text", RCUpdater<wchar_t>::SkipAllComments(s4));
+
+   wchar_t s5[] = L"/*1*///2\n  new line";
+   EXPECT_STREQ(L"new line", RCUpdater<wchar_t>::SkipAllComments(s5));
+
+   wchar_t s6[] =
+      L" \t //comment"
+      L"\r\n  next line"
+      ;
+   EXPECT_STREQ(L"next line", RCUpdater<wchar_t>::SkipAllComments(s6));
+
+   wchar_t s7[] =
+      L" \t //comment"
+      L"\r\n\t/*  \t\r\n\r\n   */"
+      L"\r\n // more comments"
+      L"\r\n   /* even more comments */ // ludicrous"
+      L"\r\n/*number of comments*/ \t \t \r \n \r \n "
+      L"\r\n  finally text"
+      ;
+   EXPECT_STREQ(L"finally text", RCUpdater<wchar_t>::SkipAllComments(s7));
 }

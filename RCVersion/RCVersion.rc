@@ -49,8 +49,8 @@ END
 // Version
 //
 
- VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1, 0, 100, 0
+/**/VS_VERSION_INFO VERSIONINFO/**/
+ FILEVERSION/**/ 1/**/,/**/0/**/,/**/100/**/,/**/0
  PRODUCTVERSION 1, 0, 100, 0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -68,7 +68,7 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "JurekM"
             VALUE "FileDescription", "RCVersion.exe"
-            VALUE "FileVersion", "1, 0, 100, 0"
+            /**/VALUE/**/"FileVersion"/**/,/**/"1, 0, 100, 0"/**/
             VALUE "InternalName", "RCVersion.exe"
             VALUE "LegalCopyright", "Copyright (C) 2012 MIT License"
             VALUE "OriginalFilename", "RCVersion.exe"

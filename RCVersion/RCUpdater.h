@@ -107,11 +107,51 @@ public:
       return psz;
    }
 
+   static char* strfind(char* where, const char* what)
+   {
+      return strstr(where, what);
+   }
+
+   static wchar_t* strfind(wchar_t* where, const wchar_t* what)
+   {
+      return wcsstr(where, what);
+   }
+
    static charT* NextLine(charT*line)
    {
       while (*line && '\n' != *line)
          ++line;
       return *line ? line + 1 : line;
+   }
+
+   static charT* SkipComment(charT*psz)
+   {
+      static const charT space[] = { ' ', '\t', 0 };
+      psz = LTrim(psz, space);
+
+      if ('/' == psz[0] && '/' == psz[1])
+         return NextLine(psz);
+
+      if ('/' == psz[0] && '*' == psz[1])
+      {
+         static const charT endcomment[] = { '*', '/', 0 };
+         charT *next = strfind(psz + 2, endcomment);
+         return (nullptr == next) ? psz : LTrim(next + 2, space);
+      }
+
+      return psz;
+   }
+
+   static charT* SkipAllComments(charT*psz)
+   {
+      static const charT white[] = { ' ', '\t', '\r', '\n', 0 };
+      charT* next = SkipComment(psz);
+      while (psz != next)
+      {
+         psz = LTrim(next, white);
+         next = SkipComment(psz);
+      }
+      return psz;
    }
 
    static bool str2int(char* &psz, int& value, const char* chaff)
@@ -186,21 +226,20 @@ public:
    static size_t FindStartOfVersion(charT *buffer)
    {
       static const charT space[] = { ' ', '\t', 0 };
-      static const charT stopper[] = { ' ', '\t', '\n', 0 };
+      static const charT stopper[] = { ' ', '\t', '\n', '/', 0 };
       static const charT keyword[] = { 'V', 'E', 'R', 'S', 'I', 'O', 'N', 'I', 'N', 'F', 'O', 0 };
       size_t length = traitsT::length(keyword);
 
       charT* line = buffer;
       while (*line)
       {
-         // Skip to the keyword
-         line = LTrim(line, space);
+         line = SkipAllComments(line);
          line = LSkipTo(line, stopper);
-         line = LTrim(line, space);
+         line = SkipComment(line);
 
          // Is this the space delimited keyword we need
          bool found = 0 == traitsT::compare(keyword, line, length);
-         found = found && (unsigned char(line[length]) <= unsigned char(' '));
+         found = found && (unsigned char(line[length]) <= unsigned char(' ') || '/' == line[length]);
          line = NextLine(line);
 
          // Return the offset of the next line
@@ -220,9 +259,9 @@ public:
       charT *line = buffer + start;
       while (*line)
       {
-         line = LTrim(line, space);
+         line = SkipComment(line);
 
-         if ('#' == line[0] || '/' == line[0] && '/' == line[1])
+         if ('#' == line[0])
          {
             line = NextLine(line);
             continue;
@@ -242,10 +281,9 @@ public:
 
             if (0 != traitsT::compare(keyword, line, length))
                continue;
-            if (' ' < line[length])
+            if (' ' < line[length] && '/' != line[length])
                continue;
 
-            line = LTrim(line, space);
             found = true;
             if (verbose)
             {
@@ -257,7 +295,7 @@ public:
             // FIXEDFILEINFO keyword, version follows after space
             if ('-' == code)
             {
-               line = LTrim(line + length, space);
+               line = SkipComment(line + length);
                size_t offset = line - buffer;
                offsets.push_back(offset);
                break;
@@ -266,8 +304,7 @@ public:
             // STRINGFILEINFO keyword, version may follow after string name
             if ('+' == code)
             {
-               line = LSkipTo(line, space);
-               line = LTrim(line, space);
+               line = SkipComment(line + length);
 
                for (unsigned vx = 0; 0 != keywords[vx]; ++vx)
                {
@@ -278,7 +315,9 @@ public:
                      continue;
                   if (0 != traitsT::compare(name, line, chars))
                      continue;
-                  line = LTrim(line + chars, chaff);
+                  line = SkipComment(line + chars);
+                  line = LTrim(line, chaff);
+                  line = SkipComment(line);
                   if (*line <= charT(' '))
                      continue;
                   if (charT('\"') == *line)
