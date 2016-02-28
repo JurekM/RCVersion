@@ -27,9 +27,6 @@
     <ClInclude Include="AutoHClose.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="trim.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ILogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>

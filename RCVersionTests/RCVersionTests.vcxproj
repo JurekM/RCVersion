@@ -175,6 +175,7 @@
     <ClInclude Include="TestLogger.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="HandlerTests.cpp" />
     <ClCompile Include="HelperTests.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OptionsTests.cpp" />

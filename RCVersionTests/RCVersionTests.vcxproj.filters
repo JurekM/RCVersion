@@ -35,7 +35,13 @@
     <ClCompile Include="OptionsTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UpdaterTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="HelperTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HandlerTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

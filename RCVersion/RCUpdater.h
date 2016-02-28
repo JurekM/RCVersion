@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "MessageBuffer.h"
+#include "ILogger.h"
 
 template <class charT>
 const charT** GetKeywordTable() { return nullptr; }
