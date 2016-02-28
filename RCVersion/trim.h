@@ -3,14 +3,14 @@
 
 inline const char* LTrim(const char* text)
 {
-	while (0 != *text && isspace(*text))
+	while (0 != *text && isspace(unsigned char(*text)))
 		++text;
 	return text;
 }
 
 inline char* LTrim(char* text)
 {
-	while (0 != *text && isspace(*text))
+	while (0 != *text && isspace(unsigned char(*text)))
 		++text;
 	return text;
 }
@@ -88,14 +88,14 @@ inline char* SkipString(char* text)
 
 inline const char* SkipWord(const char* text)
 {
-	while (0 != *text && !isspace(*text))
+	while (0 != *text && !isspace(unsigned char(*text)))
 		++text;
 	return text;
 }
 
 inline char* SkipWord(char* text)
 {
-	while (0 != *text && !isspace(*text))
+	while (0 != *text && !isspace(unsigned char(*text)))
 		++text;
 	return text;
 }

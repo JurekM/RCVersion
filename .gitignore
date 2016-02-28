@@ -17,6 +17,9 @@
 _[Dd]ebug-*/
 _[Rr]elease-*/
 
+# Visual Studio marker file
+*.VC.opendb
+
 # Intermediate files
 __int/
 

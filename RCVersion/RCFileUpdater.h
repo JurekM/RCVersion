@@ -17,7 +17,8 @@ public:
 	int buildNumber;
 	int revision;
 
-	bool verbose;
+   bool isUnicode;
+   bool verbose;
 
 	std::wstring inputFile;
 	std::wstring outputFile;
@@ -42,7 +43,7 @@ public:
 
 	static bool MatchSkip(char* &line, const char* text, bool allowComma);
 	static char* FindVersionItem(char* bufferData, const char* name, const char* value);
-	int UpdateVersionNumber(char* version, size_t availableChars, int major, int minor, int build, int revision, const char* message) const;
+   int UpdateVersionNumber(char* version, size_t availableChars, int major, int minor, int build, int revision, const char* message) const;
 	int Update(char* text, size_t chars, const char* name, const char* value, const char* title) const;
 	static bool Replace(char* oldText, size_t oldLength, const char* newText, size_t bufferLength);
 
