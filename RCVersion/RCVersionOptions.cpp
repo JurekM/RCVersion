@@ -23,6 +23,7 @@ L"\nThe primary intended use of this command is in C++ project build. The '/b:'"
 L"\nparameter is meant to be set to, for example, source control sequence number"
 L"\nwhich provides increasing, unique version numbers."
 L"\nFile paths may contain environment variables, they will be expanded."
+L"\nLicense: https://github.com/JurekM/RCVersion"
 ;
 
 
