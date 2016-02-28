@@ -1,6 +1,41 @@
 # RCVersion
-This program modifies version in Windows resource source (.RC) file.
-The intention is that you can use it in an automated build to set version from build properties.
+This program modifies version in Windows resource source (.RC) file. The intention is that you
+can use it in an automated build to set version from build properties. The new version string
+is always formatted with four numbers separated by comma-space. The old version string can be
+either comma or period separated. RCVersion will accept any combination of spaces, periods and
+commas. So input string "1., ., 2,.,.3,,,,0" will be replaced with "1, 2, 4, 0". However string
+"1.5a" will not be accepted. Example:
+```
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,2,3,0
+ PRODUCTVERSION 1,2,3,0
+BEGIN
+ BLOCK "StringFileInfo"
+ BEGIN
+  BLOCK "040904b0"
+  BEGIN
+   VALUE "FileVersion", "1.2.3.0"
+   VALUE "ProductVersion", "1.2.3.0"
+  END
+ END
+END
+```
+will be replaced with:
+```
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1, 2, 4, 0
+ PRODUCTVERSION 1, 2, 4, 0
+BEGIN
+ BLOCK "StringFileInfo"
+ BEGIN
+  BLOCK "040904b0"
+  BEGIN
+   VALUE "FileVersion", "1, 2, 4, 0"
+   VALUE "ProductVersion", "1, 2, 4, 0"
+  END
+ END
+END
+```
 
 Run with /? parameter for command line options.
 
