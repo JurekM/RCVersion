@@ -15,13 +15,14 @@ L"\n /o:<output-file>   output file path, default: same as input"
 L"\n /v:{0|1}           verbose, default off"
 L"\n"
 L"\n"
-L"\nThis command locates and modifies FILEVERSION and PRODUCTVERSION resources"
-L"\nin a standard Windows RC file. Resource must consist of four parts separated"
-L"\nby commans or periods. The default behaviour is to increment the build number,"
+L"\nThis command locates and modifies FILEVERSION and PRODUCTVERSION resources in"
+L"\na standard Windows RC file. Resource must consist of four parts separated by"
+L"\ncommas and/or periods. The default behaviour is to increment the build number,"
 L"\nkeep the major and minor version and revision numbers."
 L"\nThe primary intended use of this command is in C++ project build. The '/b:'"
 L"\nparameter is meant to be set to, for example, source control sequence number"
 L"\nwhich provides increasing, unique version numbers."
+L"\nFile paths may contain environment variables, they will be expanded."
 ;
 
 
@@ -35,6 +36,7 @@ RCVersionOptions::RCVersionOptions(ILogger &rlogger)
    , buildNumber(-1)
    , revision(-1)
    , verbose(false)
+   , helpOnly(false)
    , logger(rlogger)
 {
 }
@@ -114,7 +116,12 @@ bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
          wchar_t code = towlower(arg[1]);
          bool colon = (0 != code && L':' == arg[2]);
          const wchar_t* value = colon ? &arg[3] : 0;
-         //wchar_t* tail = nullptr;
+
+         if (L'?' == code)
+         {
+            helpOnly = true;
+            return false;
+         }
 
          if (!value)
          {
@@ -144,7 +151,12 @@ bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
             outputFile = PathOption(value);
             break;
          case L'v':
-            verbose = 0 != NumericOption(value);
+            if (0 == wcscmp(L"0", value))
+               verbose = false;
+            else if (0 == wcscmp(L"1", value))
+               verbose = true;
+            else
+               Error(L"*** Invalid option value: [%s]", arg);
             break;
          default:
             Error(L"*** Unknown option: [%s]", arg);
@@ -169,6 +181,9 @@ bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
 // ---------------------------------------------------------------------------
 bool RCVersionOptions::Validate()
 {
+   if (helpOnly)
+      return false;
+
    if (inputFile.empty())
       Error(L"*** Missing 'input file' parameter.");
    if (outputFile.empty())
@@ -176,9 +191,6 @@ bool RCVersionOptions::Validate()
 
    if (errorDetected)
       return false;
-
-   if (INVALID_FILE_ATTRIBUTES == GetFileAttributes(inputFile.c_str()))
-      Error(L"*** Cannot access file [%s]", inputFile.c_str());
 
    return !errorDetected;
 }

@@ -88,6 +88,7 @@ TEST(RCFileHandler, UpdateWcharFileWithBom)
 
    TestLogger logger;
    RCFileHandler handler(logger);
+   handler.Verbose(true);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 
@@ -96,7 +97,7 @@ TEST(RCFileHandler, UpdateWcharFileWithBom)
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
    
-   EXPECT_STREQ(after, buffer);
+   EXPECT_STREQ(after, buffer) << logger.messages;
 }
 
 TEST(RCFileHandler, UpdateWcharFileWithNoBom)
@@ -151,6 +152,7 @@ TEST(RCFileHandler, UpdateWcharFileWithNoBom)
 
    TestLogger logger;
    RCFileHandler handler(logger);
+   handler.Verbose(true);
 
    EXPECT_TRUE(handler.UpdateFile(temp,temp,12,23,345,45));
 
@@ -159,7 +161,7 @@ TEST(RCFileHandler, UpdateWcharFileWithNoBom)
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
 
-   EXPECT_STREQ(after, buffer);
+   EXPECT_STREQ(after, buffer) << logger.messages;
 }
 
 TEST(RCFileHandler, UpdateCharFileWithBom)
@@ -215,6 +217,7 @@ TEST(RCFileHandler, UpdateCharFileWithBom)
 
    TestLogger logger;
    RCFileHandler handler(logger);
+   handler.Verbose(true);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 
@@ -223,7 +226,7 @@ TEST(RCFileHandler, UpdateCharFileWithBom)
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
 
-   EXPECT_STREQ(after, buffer);
+   EXPECT_STREQ(after, buffer) << logger.messages;
 }
 
 TEST(RCFileHandler, UpdateCharFileWithNoBom)
@@ -286,6 +289,7 @@ TEST(RCFileHandler, UpdateCharFileWithNoBom)
 
    TestLogger logger;
    RCFileHandler handler(logger);
+   handler.Verbose(true);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 
@@ -294,5 +298,5 @@ TEST(RCFileHandler, UpdateCharFileWithNoBom)
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
 
-   EXPECT_STREQ(after, buffer);
+   EXPECT_STREQ(after, buffer) << logger.messages;
 }

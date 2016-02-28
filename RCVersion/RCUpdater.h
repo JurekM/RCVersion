@@ -60,11 +60,13 @@ public:
    ILogger &logger;
    bool verbose;
    bool debug;
+   unsigned error;
 
    RCUpdater(ILogger &rlogger)
       : logger(rlogger)
       , verbose(false)
       , debug(false)
+      , error(0)
    {
    }
 
@@ -246,7 +248,11 @@ public:
             line = LTrim(line, space);
             found = true;
             if (verbose)
-               wprintf(L"FOUND: [%c]:%s offset=%u\n", wchar_t(code), MessageBuffer(keyword).message(), unsigned(line - buffer));
+            {
+               wchar_t msg[1024] = { 0 };
+               _snwprintf_s(msg, _TRUNCATE, L"FOUND: [%c]:%s offset=%u", wchar_t(code), MessageBuffer(keyword).message(), unsigned(line - buffer));
+               logger.Log(msg);
+            }
 
             // FIXEDFILEINFO keyword, version follows after space
             if ('-' == code)
@@ -280,7 +286,11 @@ public:
 
                   line = LTrim(line, space);
                   if (verbose)
-                     wprintf(L"FOUND NAME: [%s] offset=%u\n", MessageBuffer(name).message(), unsigned(line - buffer));
+                  {
+                     wchar_t msg[1024] = { 0 };
+                     _snwprintf_s(msg, _TRUNCATE, L"FOUND NAME: [%s] offset=%u", MessageBuffer(name).message(), unsigned(line - buffer));
+                     logger.Log(msg);
+                  }
                   size_t offset = line - buffer;
                   offsets.push_back(offset);
                   break;
@@ -311,26 +321,32 @@ public:
       size_t start = FindStartOfVersion(buffer);
       unsigned replacementsMade = 0;
 
+      error = ERROR_FILE_CORRUPT;
       if (0 == start)
          return 0;
 
       std::vector<size_t> offsets;
       FindVersionStrings(buffer, start, offsets);
 
+      error = ERROR_FILE_CORRUPT;
       if (0 == offsets.size())
          return 0;
 
+      error = NO_ERROR;
       bool success = true;
 
-      for (auto iter = offsets.rbegin(); offsets.rend() != iter; ++iter)
+      for (auto iter = offsets.rbegin(); success && offsets.rend() != iter; ++iter)
       {
          size_t offset = *iter;
          charT *tail = 0;
          int major = -1, minor = -1, build = -1, revision = -1;
          if (!parse(buffer + offset, &tail, major, minor, build, revision))
          {
-            MessageBuffer msg(std::basic_string<charT>(buffer + offset, tail).c_str());
-            wprintf(L"Version parsing failed for [%s] at char [%c]\n", msg.message(), wchar_t(*tail));
+            MessageBuffer msgb(std::basic_string<charT>(buffer + offset, tail).c_str());
+            wchar_t msg[1024] = { 0 };
+            _snwprintf_s(msg, _TRUNCATE, L"Version parsing failed for [%s] at char [%c]", msgb.message(), wchar_t(*tail));
+            logger.Log(msg);
+            error = ERROR_FILE_CORRUPT;
             success = false;
             continue;
          }
@@ -344,9 +360,20 @@ public:
 
          if (!format(newVersion, _countof(newVersion), major, minor, build, revision))
          {
-            wprintf(L"Version formatting failed for [%d,%d,%d,%d]\n", major, minor, build, revision);
+            wchar_t msg[1024] = { 0 };
+            _snwprintf_s(msg, _TRUNCATE, L"Version formatting failed for [%d,%d,%d,%d]", major, minor, build, revision);
+            logger.Log(msg);
+            error = ERROR_FILE_CORRUPT;
             success = false;
             continue;
+         }
+
+         {
+            MessageBuffer from(std::basic_string<charT>(buffer + offset, tail).c_str());
+            MessageBuffer to(std::basic_string<charT>(newVersion).c_str());
+            wchar_t msg[1024] = { 0 };
+            _snwprintf_s(msg, _TRUNCATE, L"Replacing [%s] with [%s]", from.message(), to.message());
+            logger.Log(msg);
          }
 
          if (!replace(buffer + offset, chars - offset, tail - (buffer + offset), newVersion))
@@ -355,7 +382,10 @@ public:
             msg1.append(std::basic_string<charT>(buffer + offset, tail).c_str());
             MessageBuffer msg2;
             msg2.append(newVersion);
-            wprintf(L"Version replace failed for [%s] / [%s]\n", msg1.message(), msg2.message());
+            wchar_t msg[1024] = { 0 };
+            _snwprintf_s(msg, _TRUNCATE, L"Version replace failed for [%s] / [%s]", msg1.message(), msg2.message());
+            logger.Log(msg);
+            error = ERROR_INSUFFICIENT_BUFFER;
             success = false;
             continue;
          }

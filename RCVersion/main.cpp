@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "RCVersionOptions.h"
 #include "RCFileHandler.h"
+#include "Logger.h"
 
 static const wchar_t szTitle[] = L"RCVersion - Modify version number in a resource RC file";
 
@@ -15,18 +16,23 @@ class ConsoleLogger : public ILogger
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-   ConsoleLogger logger;
+   ConsoleLogger clogger;
+   Logger logger(clogger);
 
-   bool verbose = true;
+   bool verbose = false;
    for (int n = 1; n < argc; ++n)
+   {
       if (0 == _wcsicmp(L"/v:0", argv[n]))
          verbose = false;
+      if (0 == _wcsicmp(L"/v:1", argv[n]))
+         verbose = true;
+   }
 
    //VersionInfo version;
    //if (verbose)
    //   wprintf(L"%s\nVersion: %s\n", szTitle, version.displayVersion);
 
-   RCVersionOptions options(logger);
+   RCVersionOptions options(clogger);
    options.verbose = verbose;
    options.Parse(argc, argv);
    if (!options.Validate())
@@ -35,15 +41,12 @@ int _tmain(int argc, _TCHAR* argv[])
       return ERROR_INVALID_PARAMETER;
    }
 
-   RCFileHandler handler(logger);
-   handler.UpdateFile(options.inputFile.c_str(), options.outputFile.c_str(), options.majorVersion, options.minorVersion, options.buildNumber, options.revision);
+   RCFileHandler handler(clogger);
+   handler.Verbose(verbose);
+   unsigned error = 0;
+   if (!handler.UpdateFile(options.inputFile.c_str(), options.outputFile.c_str(), options.majorVersion, options.minorVersion, options.buildNumber, options.revision))
+      error = handler.Error();
 
-   //if (ok)
-   //   return 0;
-
-   //wprintf(L"\nFile [%s] update failed, error: %u [0x%08X] %s\n", updater.inputFile.c_str(), updater.errorCode, updater.errorCode, updater.errorMessage.c_str());
-
-   //return updater.errorCode ? updater.errorCode : 1;
-
-   printf("\nDone.\n");
+   logger.Log(L"ERRORLEVEL=%u", error);
+   return error;
 }

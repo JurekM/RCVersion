@@ -30,7 +30,7 @@ TEST(RCVersionOptions, AllOptions1)
    };
 
    EXPECT_TRUE(vo.Parse(_countof(argv), argv));
-   EXPECT_TRUE(vo.Validate());
+   EXPECT_TRUE(vo.Validate()) << logger.messages;
    EXPECT_EQ(11, vo.majorVersion);
    EXPECT_EQ(22, vo.minorVersion);
    EXPECT_EQ(33, vo.buildNumber);

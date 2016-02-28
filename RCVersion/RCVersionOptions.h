@@ -15,6 +15,7 @@ public:
 	int revision;
 
 	bool verbose;
+   bool helpOnly;
 
 	std::wstring inputFile;
 	std::wstring outputFile;

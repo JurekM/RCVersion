@@ -8,6 +8,7 @@ RCFileHandler::RCFileHandler(ILogger &rlogger)
    : ilogger(rlogger)
    , logger(rlogger)
    , verbose(false)
+   , error(0)
 {
 }
 
@@ -17,7 +18,8 @@ RCFileHandler::~RCFileHandler()
 
 bool RCFileHandler::UpdateFile(const wchar_t *inpath, const wchar_t *outpath, int major, int minor, int build, int revision)
 {
-   logger.Log(L"UpdateFile(%s,%s)", NN(inpath), NN(outpath));
+   if (verbose)
+      logger.Log(L"UpdateFile(%s,%s)", NN(inpath), NN(outpath));
 
    void* buffer = nullptr;
    size_t bytes = 0;
@@ -39,6 +41,7 @@ bool RCFileHandler::UpdateFile(const wchar_t *inpath, const wchar_t *outpath, in
    if (0 == changes)
    {
       logger.Log(L"No changes made to [%s], file [%s] not modified.", NN(inpath), NN(outpath));
+      error = ERROR_FILE_CORRUPT;
       return false;
    }
 
@@ -46,26 +49,27 @@ bool RCFileHandler::UpdateFile(const wchar_t *inpath, const wchar_t *outpath, in
    unsigned outBytes = unsigned(isUnicode ? wcslen(static_cast<wchar_t*>(buffer))*sizeof(wchar_t) : strlen(static_cast<char*>(buffer))*sizeof(char));
 
    if (!SaveFile(outpath, buffer, outBytes))
-   {
-      logger.Error(GetLastError(), L"Cannot write file [%s].", NN(outpath));
       return false;
-   }
 
    return true;
 }
 
-unsigned RCFileHandler::RCFileHandler::UpdateBuffer(char* buffer, size_t chars, int major, int minor, int build, int revision)
+unsigned RCFileHandler::RCFileHandler::UpdateBuffer(char* buffer, size_t chars, int major, int minor, int build, int revision) const
 {
-   logger.Log(L"UpdateBuffer<char>(...,%u)", unsigned(chars));
+   if (verbose)
+      logger.Log(L"UpdateBuffer<char>(...,%u)", unsigned(chars));
    RCUpdater<char> updater(ilogger);
+   updater.verbose = verbose;
    unsigned changes = updater.UpdateVersion(buffer, chars, major, minor, build, revision);
    return changes;
 }
 
-unsigned RCFileHandler::RCFileHandler::UpdateBuffer(wchar_t* buffer, size_t chars, int major, int minor, int build, int revision)
+unsigned RCFileHandler::RCFileHandler::UpdateBuffer(wchar_t* buffer, size_t chars, int major, int minor, int build, int revision) const
 {
-   logger.Log(L"UpdateBuffer<wchar>(...,%u)", unsigned(chars));
+   if (verbose)
+      logger.Log(L"UpdateBuffer<wchar>(...,%u)", unsigned(chars));
    RCUpdater<wchar_t> updater(ilogger);
+   updater.verbose = verbose;
    unsigned changes = updater.UpdateVersion(buffer, chars, major, minor, build, revision);
    return changes;
 }
@@ -75,19 +79,21 @@ unsigned RCFileHandler::RCFileHandler::UpdateBuffer(wchar_t* buffer, size_t char
 // ---------------------------------------------------------------------------
 bool RCFileHandler::LoadFile(const wchar_t* path, size_t padding, void* &buffer, size_t &bytes)
 {
+   if (verbose)
+      logger.Log(L"Reading file [%s]...", path);
    if (!path || !*path)
-      return logger.Error(ERROR_INVALID_PARAMETER, L"*** RCFileUpdater::Load: Input file path must not be empty");
+      return logger.Error(error=ERROR_INVALID_PARAMETER, L"*** RCFileUpdater::Load: Input file path must not be empty");
 
    HANDLE hFile = CreateFile(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING, 0, nullptr);
    if (INVALID_HANDLE_VALUE == hFile)
-      return logger.Error(GetLastError(), L"*** RCFileUpdater::Load: Cannot open input file", path);
+      return logger.Error(error=GetLastError(), L"*** RCFileUpdater::Load: Cannot open input file", path);
 
    AutoHClose ahc(hFile);
 
    ULARGE_INTEGER li = { 0 };
    li.LowPart = GetFileSize(hFile, &li.HighPart);
    if (0 != li.HighPart || (0x7FFFFFFF - padding) <= li.LowPart)
-      return logger.Error(ERROR_FILE_CORRUPT, L"*** RCFileUpdater::Load: File too large", path);
+      return logger.Error(error=ERROR_FILE_CORRUPT, L"*** RCFileUpdater::Load: File too large", path);
 
    if (padding < 2)
       padding = 2;
@@ -95,7 +101,7 @@ bool RCFileHandler::LoadFile(const wchar_t* path, size_t padding, void* &buffer,
    bytes = li.LowPart + padding;
    buffer = malloc(bytes);
    if (!buffer)
-      return logger.Error(ERROR_OUTOFMEMORY, L"*** RCFileUpdater::Load: File too large", path);
+      return logger.Error(error=ERROR_OUTOFMEMORY, L"*** RCFileUpdater::Load: File too large", path);
 
    DWORD readBytes = 0;
    BOOL ok = ReadFile(hFile, buffer, DWORD(bytes), &readBytes, nullptr);
@@ -104,7 +110,7 @@ bool RCFileHandler::LoadFile(const wchar_t* path, size_t padding, void* &buffer,
       free(buffer);
       buffer = nullptr;
       bytes = 0;
-      return logger.Error(GetLastError(), L"*** RCFileUpdater::Load: Cannot read input file", path);
+      return logger.Error(error=GetLastError(), L"*** RCFileUpdater::Load: Cannot read input file", path);
    }
 
    *(0 + readBytes + static_cast<char*>(buffer)) = 0;
@@ -117,12 +123,14 @@ bool RCFileHandler::LoadFile(const wchar_t* path, size_t padding, void* &buffer,
 // ---------------------------------------------------------------------------
 bool RCFileHandler::SaveFile(const wchar_t* path, void* buffer, size_t bytes)
 {
+   if (verbose)
+      logger.Log(L"Writing file [%s]...", path);
    if (!path || !*path)
-      return logger.Error(ERROR_INVALID_PARAMETER, L"*** RCFileUpdater::Save: Output file path must not be empty.");
+      return logger.Error(error=ERROR_INVALID_PARAMETER, L"*** RCFileUpdater::Save: Output file path must not be empty.");
 
-   HANDLE hFile = CreateFile(path, GENERIC_READ|GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_DELETE, nullptr, CREATE_ALWAYS, 0, nullptr);
+   HANDLE hFile = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_DELETE, nullptr, CREATE_ALWAYS, 0, nullptr);
    if (INVALID_HANDLE_VALUE == hFile)
-      return logger.Error(GetLastError(), L"*** RCFileUpdater::Load: Cannot open output file", path);
+      return logger.Error(error=GetLastError(), L"*** RCFileUpdater::Save: Cannot open output file [%s]", path);
 
    AutoHClose ahc(hFile);
 
@@ -130,7 +138,7 @@ bool RCFileHandler::SaveFile(const wchar_t* path, void* buffer, size_t bytes)
    BOOL ok = WriteFile(hFile, buffer, DWORD(bytes), &writeBytes, nullptr);
    if (!ok || bytes != writeBytes)
    {
-      return logger.Error(GetLastError(), L"*** RCFileUpdater::Load: Cannot write output file", path);
+      return logger.Error(error=GetLastError(), L"*** RCFileUpdater::Save: Cannot write output file [%s]", path);
    }
 
    return true;
