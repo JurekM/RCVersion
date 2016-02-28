@@ -5,10 +5,10 @@ The intention is that you can use it in an automated build to set version from b
 Run with /? parameter for command line options.
 
 Example command lines:
-
+```
   RCVersion C:\Projects\RCVersion\RCVersion\RCVersion.rc /b:$(SCCREVISION)
-
   RCVersion C:\Projects\RCVersion\RCVersion\RCVersion.rc /b:$(SCCREVISION) /m:1 /n:3 /r:0
+```
 
 This program may or may not process invalid RC files.
 
@@ -17,15 +17,15 @@ comments embedded in the middle of the version even if RC.exe would accept that.
 are not normally created by Visual Studio. Example:
 
 Accepted by RC.exe and accepted by RCVersion:
-
- /* */FILEVERSION/* */ 1, 2, 3, 4/**/
-
- /* */VALUE/* */ "FileVersion"/* */,/* */ "1, 2, 3, 4/* */"
+```
+ /**/FILEVERSION/**/ 1, 2, 3, 4/**/
+ /**/VALUE/**/ "FileVersion"/**/,/**/ "1, 2, 3, 4/* */"
+```
 
 Accepted by RC.exe but not accepted by RCVersion:
-
+```
  FILEVERSION 1/* */,2, 3, 4
-
  FILEVERSION 1,/* */2, 3, 4
+```
 
 <eof>
