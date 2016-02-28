@@ -4,7 +4,6 @@
 #include "TestLogger.h"
 #include "Logger.h"
 #include <MessageBuffer.h>
-#include <trim.h>
 
 TEST(AutoFree, NullNoCrash)
 {

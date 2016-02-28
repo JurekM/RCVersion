@@ -57,8 +57,6 @@ template<class charT, class traitsT = std::char_traits<charT>>
 class RCUpdater
 {
 public:
-   enum KTYPE { kSkip, kFixed, kString };
-
    ILogger &logger;
    bool verbose;
    bool debug;
@@ -93,7 +91,7 @@ public:
    }
 
    // Left-skip to a chaff character
-   charT* LSkipTo(charT*psz, const charT*chaff)
+   static charT* LSkipTo(charT*psz, const charT*chaff)
    {
       while (*psz)
       {
@@ -107,7 +105,7 @@ public:
       return psz;
    }
 
-   charT* NextLine(charT*line)
+   static charT* NextLine(charT*line)
    {
       while (*line && '\n' != *line)
          ++line;
@@ -164,6 +162,8 @@ public:
 
    static bool replace(charT *buffer, size_t totalChars, size_t oldChars, const charT* newString)
    {
+      if (totalChars <= oldChars)
+         return false;
       size_t newChars = traitsT::length(newString);
       if (oldChars < newChars)
       {
