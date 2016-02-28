@@ -19,7 +19,7 @@ are not normally created by Visual Studio. Example:
 Accepted by RC.exe and accepted by RCVersion:
 ```
  /**/FILEVERSION/**/ 1, 2, 3, 4/**/
- /**/VALUE/**/ "FileVersion"/**/,/**/ "1, 2, 3, 4/* */"
+ /**/VALUE/**/ "FileVersion"/**/,/**/ "1, 2, 3, 4/**/"
 ```
 
 Accepted by RC.exe but not accepted by RCVersion:
