@@ -50,8 +50,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 15, 23, 3456, 891
- PRODUCTVERSION 16, 24, 4567, 892
+ FILEVERSION 15, 23, 999, 891
+ PRODUCTVERSION 16, 24,       4567, 892
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,7 +68,7 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "JurekM"
             VALUE "FileDescription", "RCVersion.exe"
-            VALUE "FileVersion", "17, 25, 5678, 893"
+            VALUE "FileVersion", "17,  25,  5678,  893"
             VALUE "InternalName", "RCVersion.exe"
             VALUE "LegalCopyright", "Copyright (C) 2016 MIT License"
             VALUE "OriginalFilename", "RCVersion.exe"

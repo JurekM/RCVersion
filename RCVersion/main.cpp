@@ -1,21 +1,21 @@
 // RCVersion.cpp : Defines the entry point for the console application.
 #include "stdafx.h"
 #include "RCVersionOptions.h"
-#include "RCFileUpdater.h"
+#include "RCFileHandler.h"
 
 static const wchar_t szTitle[] = L"RCVersion - Modify version number in a resource RC file";
 
-class Logger : public ILogger
+class ConsoleLogger : public ILogger
 {
    void Log(const wchar_t* message) override
    {
-      wprintf(L"\n%s", message);
+      wprintf(L"%s\n", message);
    }
 };
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-   Logger logger;
+   ConsoleLogger logger;
 
    bool verbose = true;
    for (int n = 1; n < argc; ++n)
@@ -35,25 +35,15 @@ int _tmain(int argc, _TCHAR* argv[])
       return ERROR_INVALID_PARAMETER;
    }
 
-   RCFileUpdater updater(logger);
+   RCFileHandler handler(logger);
+   handler.UpdateFile(options.inputFile.c_str(), options.outputFile.c_str(), options.majorVersion, options.minorVersion, options.buildNumber, options.revision);
 
-   updater.majorVersion = options.majorVersion;
-   updater.minorVersion = options.minorVersion;
-   updater.buildNumber = options.buildNumber;
-   updater.revision = options.revision;
-   updater.inputFile = options.inputFile;
-   updater.outputFile = options.outputFile;
-   updater.verbose = verbose;
+   //if (ok)
+   //   return 0;
 
-   bool ok = updater.UpdateFile();
+   //wprintf(L"\nFile [%s] update failed, error: %u [0x%08X] %s\n", updater.inputFile.c_str(), updater.errorCode, updater.errorCode, updater.errorMessage.c_str());
 
-   if (verbose)
-      wprintf(L"\n");
+   //return updater.errorCode ? updater.errorCode : 1;
 
-   if (ok)
-      return 0;
-
-   wprintf(L"\nFile [%s] update failed, error: %u [0x%08X] %s\n", updater.inputFile.c_str(), updater.errorCode, updater.errorCode, updater.errorMessage.c_str());
-
-   return updater.errorCode ? updater.errorCode : 1;
+   printf("\nDone.\n");
 }

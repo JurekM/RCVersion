@@ -26,7 +26,7 @@ public:
 	bool Parse(int argc, wchar_t* argv[]);
 	bool Validate();
 
-	void Log(const wchar_t* message);
+	void Log(const wchar_t* message) const;
 	void Error(const wchar_t* format, ...);
 
 	int NumericOption(const wchar_t* value);
