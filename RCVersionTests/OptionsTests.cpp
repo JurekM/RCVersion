@@ -35,7 +35,7 @@ TEST(RCVersionOptions, AllOptions1)
    EXPECT_EQ(22, vo.minorVersion);
    EXPECT_EQ(33, vo.buildNumber);
    EXPECT_EQ(44, vo.revision);
-   EXPECT_FALSE(vo.verbose);
+   EXPECT_EQ(0, vo.verbosity);
    EXPECT_EQ(L"outfile.txt", vo.outputFile);
    EXPECT_EQ(L"..\\test-in.rc", vo.inputFile);
 }
@@ -50,7 +50,7 @@ TEST(RCVersionOptions, AllOptions2)
       L"",
       L"..\\test-in.rc",
       L"/o:outfile.txt",
-      L"/v:1",
+      L"/v:3",
       L"/r:41",
       L"/b:31",
       L"/n:21",
@@ -63,7 +63,7 @@ TEST(RCVersionOptions, AllOptions2)
    EXPECT_EQ(21, vo.minorVersion);
    EXPECT_EQ(31, vo.buildNumber);
    EXPECT_EQ(41, vo.revision);
-   EXPECT_TRUE(vo.verbose);
+   EXPECT_EQ(3, vo.verbosity);
    EXPECT_EQ(L"outfile.txt", vo.outputFile);
    EXPECT_EQ(L"..\\test-in.rc", vo.inputFile);
 }
@@ -84,7 +84,7 @@ TEST(RCVersionOptions, MinimumOptions)
    EXPECT_EQ(-1, vo.minorVersion);
    EXPECT_EQ(-1, vo.buildNumber);
    EXPECT_EQ(-1, vo.revision);
-   EXPECT_FALSE(vo.verbose);
+   EXPECT_EQ(3, vo.verbosity);
    EXPECT_EQ(L"..\\test-in.rc", vo.outputFile);
    EXPECT_EQ(L"..\\test-in.rc", vo.inputFile);
 }

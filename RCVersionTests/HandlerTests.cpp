@@ -88,7 +88,7 @@ TEST(RCFileHandler, UpdateWcharFileWithBom)
 
    TestLogger logger;
    RCFileHandler handler(logger);
-   handler.Verbose(true);
+   handler.Verbosity(9);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 
@@ -152,7 +152,7 @@ TEST(RCFileHandler, UpdateWcharFileWithNoBom)
 
    TestLogger logger;
    RCFileHandler handler(logger);
-   handler.Verbose(true);
+   handler.Verbosity(9);
 
    EXPECT_TRUE(handler.UpdateFile(temp,temp,12,23,345,45));
 
@@ -217,7 +217,7 @@ TEST(RCFileHandler, UpdateCharFileWithBom)
 
    TestLogger logger;
    RCFileHandler handler(logger);
-   handler.Verbose(true);
+   handler.Verbosity(9);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 
@@ -289,7 +289,7 @@ TEST(RCFileHandler, UpdateCharFileWithNoBom)
 
    TestLogger logger;
    RCFileHandler handler(logger);
-   handler.Verbose(true);
+   handler.Verbosity(9);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 

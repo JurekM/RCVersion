@@ -58,13 +58,13 @@ class RCUpdater
 {
 public:
    ILogger &logger;
-   bool verbose;
+   int  verbosity;
    bool debug;
    unsigned error;
 
    RCUpdater(ILogger &rlogger)
       : logger(rlogger)
-      , verbose(false)
+      , verbosity(1)
       , debug(false)
       , error(0)
    {
@@ -285,7 +285,7 @@ public:
                continue;
 
             found = true;
-            if (verbose)
+            if (7 <= verbosity || '-'==code && 6 <= verbosity)
             {
                wchar_t msg[1024] = { 0 };
                _snwprintf_s(msg, _TRUNCATE, L"FOUND: [%c]:%s offset=%u", wchar_t(code), MessageBuffer(keyword).message(), unsigned(line - buffer));
@@ -324,7 +324,7 @@ public:
                      ++line;
 
                   line = LTrim(line, space);
-                  if (verbose)
+                  if (6 <= verbosity)
                   {
                      wchar_t msg[1024] = { 0 };
                      _snwprintf_s(msg, _TRUNCATE, L"FOUND NAME: [%s] offset=%u", MessageBuffer(name).message(), unsigned(line - buffer));
@@ -412,7 +412,8 @@ public:
             MessageBuffer to(std::basic_string<charT>(newVersion).c_str());
             wchar_t msg[1024] = { 0 };
             _snwprintf_s(msg, _TRUNCATE, L"Replacing [%s] with [%s]", from.message(), to.message());
-            logger.Log(msg);
+            if (3 <= verbosity)
+               logger.Log(msg);
          }
 
          if (!replace(buffer + offset, chars - offset, tail - (buffer + offset), newVersion))

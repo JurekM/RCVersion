@@ -18,35 +18,29 @@ int _tmain(int argc, _TCHAR* argv[])
 {
    ConsoleLogger clogger;
    Logger logger(clogger);
-
-   bool verbose = false;
-   for (int n = 1; n < argc; ++n)
-   {
-      if (0 == _wcsicmp(L"/v:0", argv[n]))
-         verbose = false;
-      if (0 == _wcsicmp(L"/v:1", argv[n]))
-         verbose = true;
-   }
+   RCVersionOptions options(clogger);
+   options.CheckVerbosity(argc, argv);
 
    //VersionInfo version;
    //if (verbose)
    //   wprintf(L"%s\nVersion: %s\n", szTitle, version.displayVersion);
 
-   RCVersionOptions options(clogger);
-   options.verbose = verbose;
    options.Parse(argc, argv);
    if (!options.Validate())
    {
       wprintf(L"\n%s\n", options.Help);
+      if (0 < options.verbosity)
+         wprintf(L"\nERRORLEVEL=%u", ERROR_INVALID_PARAMETER);
       return ERROR_INVALID_PARAMETER;
    }
 
    RCFileHandler handler(clogger);
-   handler.Verbose(verbose);
+   handler.Verbosity(options.verbosity);
    unsigned error = 0;
    if (!handler.UpdateFile(options.inputFile.c_str(), options.outputFile.c_str(), options.majorVersion, options.minorVersion, options.buildNumber, options.revision))
       error = handler.Error();
 
-   logger.Log(L"ERRORLEVEL=%u", error);
+   if (0 < options.verbosity)
+      logger.Log(1, L"ERRORLEVEL=%u", error);
    return error;
 }

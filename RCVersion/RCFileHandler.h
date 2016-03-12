@@ -6,16 +6,17 @@ class RCFileHandler
 protected:
    ILogger &ilogger;
    Logger logger;
-   bool verbose;
    unsigned error;
+
+   enum LOG_LEVEL {logError=0, logMinimum=1, logNormal=2, logInfo=3, logDetail=5, logVerbose=9};
 
 public:
    RCFileHandler(ILogger &rlogger);
    virtual ~RCFileHandler();
 
    unsigned Error() const { return error; }
-   bool Verbose() const { return verbose; }
-   void Verbose(bool value) { verbose = value; }
+   int Verbosity() const { return logger.Verbosity(); }
+   void Verbosity(int value) { logger.Verbosity (value); }
 
    bool LoadFile(const wchar_t* path, size_t padding, void* &buffer, size_t &bytes);
    bool SaveFile(const wchar_t* path, void* buffer, size_t bytes);

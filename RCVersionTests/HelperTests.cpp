@@ -74,7 +74,7 @@ TEST(Logger, Normal)
    EXPECT_FALSE(logger.Error(11, L"Number=%d String=%s", 1234, L"test001"));
    EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"1234"));
    EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"test001"));
-   logger.Log(L"Number=%d String=%s", 321, L"test02");
+   logger.Log(0, L"Number=%d String=%s", 321, L"test02");
    EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"321"));
    EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"test02"));
 }

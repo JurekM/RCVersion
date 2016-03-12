@@ -100,7 +100,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>echo attrib -r -s -h "$(ProjectDir)$(ProjectName).rc" &amp; echo RCVersion "$(ProjectDir)$(ProjectName).rc" /b:$(BuildNumber)</Command>
+      <Command>attrib -r -s -h "$(ProjectDir)$(ProjectName).rc" &amp; RCVersion "$(ProjectDir)$(ProjectName).rc" /b:$(BuildNumber)</Command>
       <Message>Set build number...</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -118,7 +118,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>echo attrib -r -s -h "$(ProjectDir)$(ProjectName).rc" &amp; echo RCVersion "$(ProjectDir)$(ProjectName).rc" /b:$(BuildNumber)</Command>
+      <Command>attrib -r -s -h "$(ProjectDir)$(ProjectName).rc" &amp; RCVersion "$(ProjectDir)$(ProjectName).rc" /b:$(BuildNumber)</Command>
       <Message>Set build number...</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -140,7 +140,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>echo attrib -r -s -h "$(ProjectDir)$(ProjectName).rc" &amp; echo RCVersion "$(ProjectDir)$(ProjectName).rc" /b:$(BuildNumber)</Command>
+      <Command>attrib -r -s -h "$(ProjectDir)$(ProjectName).rc" &amp; RCVersion "$(ProjectDir)$(ProjectName).rc" /b:$(BuildNumber)</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Set build number...</Message>
@@ -164,7 +164,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>echo attrib -r -s -h "$(ProjectDir)$(ProjectName).rc" &amp; echo RCVersion "$(ProjectDir)$(ProjectName).rc" /b:$(BuildNumber)</Command>
+      <Command>attrib -r -s -h "$(ProjectDir)$(ProjectName).rc" &amp; RCVersion "$(ProjectDir)$(ProjectName).rc" /b:$(BuildNumber)</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Set build number...</Message>

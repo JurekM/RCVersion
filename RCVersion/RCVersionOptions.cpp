@@ -12,7 +12,7 @@ L"\n /n:<minor-version> new minor version, default: unchanged"
 L"\n /b:<build-number>  new build number, default: increment by one"
 L"\n /r:<revision>      new revision number, default: unchanged"
 L"\n /o:<output-file>   output file path, default: same as input"
-L"\n /v:{0|1}           verbose, default off"
+L"\n /v:{0|1|...|9}     verbosity level, 0=lowest, 9=highest, default: 3"
 L"\n"
 L"\n"
 L"\nThis command locates and modifies FILEVERSION and PRODUCTVERSION resources in"
@@ -36,19 +36,10 @@ RCVersionOptions::RCVersionOptions(ILogger &rlogger)
    , minorVersion(-1)
    , buildNumber(-1)
    , revision(-1)
-   , verbose(false)
+   , verbosity(3)
    , helpOnly(false)
    , logger(rlogger)
 {
-}
-
-
-// ---------------------------------------------------------------------------
-// 
-// ---------------------------------------------------------------------------
-void RCVersionOptions::Log(const wchar_t* message) const
-{
-   logger.Log(message);
 }
 
 
@@ -62,7 +53,7 @@ void RCVersionOptions::Error(const wchar_t* format, ...)
    va_start(vList, format);
    wchar_t buffer[1024] = { 0 };
    _vsnwprintf_s(buffer, _TRUNCATE, format, vList);
-   Log(buffer);
+   logger.Log(buffer);
 }
 
 
@@ -101,6 +92,25 @@ std::wstring RCVersionOptions::PathOption(const wchar_t* value)
 // ---------------------------------------------------------------------------
 // 
 // ---------------------------------------------------------------------------
+void RCVersionOptions::CheckVerbosity(int argc, wchar_t* argv[])
+{
+   for (int n = 1; n < argc; ++n)
+   {
+      wchar_t* arg = argv[n];
+      if ('/' == arg[0] && 'v' == towlower(arg[1]) && ':' == arg[2] && iswdigit(arg[3]))
+      {
+         wchar_t* tail = nullptr;
+         unsigned long result = wcstoul(&arg[4], &tail, 10);
+         if (0 == *tail)
+            verbosity = int(result);
+      }
+   }
+}
+
+
+// ---------------------------------------------------------------------------
+// 
+// ---------------------------------------------------------------------------
 bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
 {
    errorDetected = false;
@@ -121,6 +131,7 @@ bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
          if (L'?' == code)
          {
             helpOnly = true;
+            verbosity = 0;
             return false;
          }
 
@@ -152,12 +163,8 @@ bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
             outputFile = PathOption(value);
             break;
          case L'v':
-            if (0 == wcscmp(L"0", value))
-               verbose = false;
-            else if (0 == wcscmp(L"1", value))
-               verbose = true;
-            else
-               Error(L"*** Invalid option value: [%s]", arg);
+            if (*value)
+               verbosity = NumericOption(value);
             break;
          default:
             Error(L"*** Unknown option: [%s]", arg);

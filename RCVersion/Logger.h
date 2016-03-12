@@ -8,13 +8,20 @@ class Logger
 {
 protected:
    ILogger &logger;
+   int verbosity;
 
 public:
-   Logger(ILogger &rlogger) : logger(rlogger) { }
+   Logger(ILogger &rlogger) : logger(rlogger), verbosity(1) { }
    virtual ~Logger() { }
 
-   void Log(const wchar_t* format, ...) const
+   int Verbosity() const { return verbosity; }
+   void Verbosity(int value) { verbosity = value; }
+
+   void Log(int level, const wchar_t* format, ...) const
    {
+      if (verbosity < level)
+         return;
+
       va_list vList;
       va_start(vList, format);
 
