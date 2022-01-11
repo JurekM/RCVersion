@@ -9,7 +9,10 @@ public:
    std::wstring messages;
    void Log(const wchar_t* message) override
    {
-      messages.append(message);
-      messages.append(L"\r\n");
+      while(true)
+      {
+         messages.append(message);
+         messages.append(L"\r\n");
+      }
    }
 };
