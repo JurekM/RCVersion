@@ -21,9 +21,9 @@ public:
 
    bool MakeTempFileName(wchar_t*path, size_t chars)
    {
-      wchar_t dir[MAX_PATH + 1] = {0};
+      wchar_t dir[MAX_PATH + 1]{};
       GetTempPath(_countof(dir), dir);
-      wchar_t temp[MAX_PATH + 1] = { 0 };
+      wchar_t temp[MAX_PATH + 1]{};
       GetTempFileName(dir, L"xyz", 0, temp);
       size_t length = wcslen(temp);
       if (chars <= length)
@@ -78,21 +78,21 @@ TEST(RCFileHandler, UpdateWcharFileWithBom)
       L"\r\n"
       ;
 
-   wchar_t temp[MAX_PATH+1] = { 0 };
-   AutoDeleteFiles adf;
+   wchar_t temp[MAX_PATH+1]{};
+   AutoDeleteFiles adf{};
    adf.MakeTempFileName(temp, _countof(temp));
 
    FILE*ofile = _wfopen(temp, L"wb");
    fwrite(before, 1, sizeof(before) - sizeof(before[0]), ofile);
    fclose(ofile);
 
-   TestLogger logger;
-   RCFileHandler handler(logger);
+   TestLogger logger{};
+   RCFileHandler handler{logger};
    handler.Verbosity(9);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 
-   wchar_t buffer[_countof(after) + 256] = { 0 };
+   wchar_t buffer[_countof(after) + 256]{};
    FILE*ifile = _wfopen(temp, L"rb");
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
@@ -142,21 +142,21 @@ TEST(RCFileHandler, UpdateWcharFileWithNoBom)
       ;
    ;
 
-   wchar_t temp[MAX_PATH + 1] = { 0 };
-   AutoDeleteFiles adf;
+   wchar_t temp[MAX_PATH + 1]{};
+   AutoDeleteFiles adf{};
    adf.MakeTempFileName(temp, _countof(temp));
 
    FILE*ofile = _wfopen(temp, L"wb");
    fwrite(before, 1, sizeof(before) - sizeof(before[0]), ofile);
    fclose(ofile);
 
-   TestLogger logger;
-   RCFileHandler handler(logger);
+   TestLogger logger{};
+   RCFileHandler handler{logger};
    handler.Verbosity(9);
 
    EXPECT_TRUE(handler.UpdateFile(temp,temp,12,23,345,45));
 
-   wchar_t buffer[_countof(after) + 256] = { 0 };
+   wchar_t buffer[_countof(after) + 256]{};
    FILE*ifile = _wfopen(temp, L"rb");
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
@@ -207,21 +207,21 @@ TEST(RCFileHandler, UpdateCharFileWithBom)
       "\r\n"
       ;
 
-   wchar_t temp[MAX_PATH + 1] = { 0 };
-   AutoDeleteFiles adf;
+   wchar_t temp[MAX_PATH + 1]{};
+   AutoDeleteFiles adf{};
    adf.MakeTempFileName(temp, _countof(temp));
 
    FILE*ofile = _wfopen(temp, L"wb");
    fwrite(before, 1, sizeof(before) - sizeof(before[0]), ofile);
    fclose(ofile);
 
-   TestLogger logger;
-   RCFileHandler handler(logger);
+   TestLogger logger{};
+   RCFileHandler handler{logger};
    handler.Verbosity(9);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 
-   char buffer[_countof(after) + 256] = { 0 };
+   char buffer[_countof(after) + 256]{};
    FILE*ifile = _wfopen(temp, L"rb");
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);
@@ -279,21 +279,21 @@ TEST(RCFileHandler, UpdateCharFileWithNoBom)
       "\r\n"
       ;
 
-   wchar_t temp[MAX_PATH + 1] = { 0 };
-   AutoDeleteFiles adf;
+   wchar_t temp[MAX_PATH + 1]{};
+   AutoDeleteFiles adf{};
    adf.MakeTempFileName(temp, _countof(temp));
 
    FILE*ofile = _wfopen(temp, L"wb");
    fwrite(before, 1, sizeof(before) - sizeof(before[0]), ofile);
    fclose(ofile);
 
-   TestLogger logger;
-   RCFileHandler handler(logger);
+   TestLogger logger{};
+   RCFileHandler handler{logger};
    handler.Verbosity(9);
 
    EXPECT_TRUE(handler.UpdateFile(temp, temp, 12, 23, 345, 45));
 
-   char buffer[_countof(after) + 256] = { 0 };
+   char buffer[_countof(after) + 256]{};
    FILE*ifile = _wfopen(temp, L"rb");
    fread(buffer, 1, sizeof(buffer), ifile);
    fclose(ifile);

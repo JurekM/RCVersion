@@ -174,8 +174,8 @@ TEST(RCUpdater, NextLineWchar)
 
 TEST(RCUpdater, str2intCharNoChaff)
 {
-   char* ptr = nullptr;
-   int value = -1;
+   char* ptr{nullptr};
+   int value{-1};
 
    char s1[] = "";
    EXPECT_FALSE(RCUpdater<char>::str2int(ptr = s1, value, nullptr));
@@ -208,8 +208,8 @@ TEST(RCUpdater, str2intCharNoChaff)
 
 TEST(RCUpdater, str2intCharWithChaff)
 {
-   char* ptr = nullptr;
-   int value = -1;
+   char* ptr{nullptr};
+   int value{-1};
 
    char s1[] = "";
    EXPECT_FALSE(RCUpdater<char>::str2int(ptr = s1, value, " .,"));
@@ -242,8 +242,8 @@ TEST(RCUpdater, str2intCharWithChaff)
 
 TEST(RCUpdater, str2intWcharNoChaff)
 {
-   wchar_t* ptr = nullptr;
-   int value = -1;
+   wchar_t* ptr{nullptr};
+   int value{-1};
 
    wchar_t s1[] = L"";
    EXPECT_FALSE(RCUpdater<wchar_t>::str2int(ptr = s1, value, nullptr));
@@ -276,8 +276,8 @@ TEST(RCUpdater, str2intWcharNoChaff)
 
 TEST(RCUpdater, str2intWcharWithChaff)
 {
-   wchar_t* ptr = nullptr;
-   int value = -1;
+   wchar_t* ptr{nullptr};
+   int value{-1};
 
    wchar_t s1[] = L"";
    EXPECT_FALSE(RCUpdater<wchar_t>::str2int(ptr = s1, value, L" .,"));
@@ -310,7 +310,7 @@ TEST(RCUpdater, str2intWcharWithChaff)
 
 TEST(RCUpdater, formatChar)
 {
-   char buffer[32] = { 0 };
+   char buffer[32]{};
 
    EXPECT_TRUE(RCUpdater<char>::format(buffer, _countof(buffer), 1, 22, 333, 444));
    EXPECT_STREQ("1, 22, 333, 444", buffer);
@@ -338,7 +338,7 @@ TEST(RCUpdater, formatChar)
 
 TEST(RCUpdater, formatWchar)
 {
-   wchar_t buffer[32] = { 0 };
+   wchar_t buffer[32]{};
 
    EXPECT_TRUE(RCUpdater<wchar_t>::format(buffer, _countof(buffer), 1, 22, 333, 444));
    EXPECT_STREQ(L"1, 22, 333, 444", buffer);
@@ -366,8 +366,8 @@ TEST(RCUpdater, formatWchar)
 
 TEST(RCUpdater, parseChar)
 {
-   int major = -1, minor = -1, build = -1, revision = -1;
-   char* tail = nullptr;
+   int major{-1}, minor{-1}, build{-1}, revision{-1};
+   char* tail{nullptr};
 
    char s1[] = " \t \t 12.234,5678 . , .,. 54321 .,.,";
    EXPECT_TRUE(RCUpdater<char>::parse(s1, &tail, major, minor, build, revision));
@@ -392,7 +392,7 @@ TEST(RCUpdater, parseChar)
 
 TEST(RCUpdater, parseWchar)
 {
-   int major = -1, minor = -1, build = -1, revision = -1;
+   int major{-1}, minor{-1}, build{-1}, revision{-1};
    wchar_t* tail = nullptr;
 
    wchar_t s1[] = L" \t \t 12.234,5678 . , .,. 54321 .,.,";

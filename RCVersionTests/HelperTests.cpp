@@ -5,19 +5,19 @@
 
 TEST(Logger, Normal)
 {
-   TestLogger tl;
-   Logger logger(tl);
-   EXPECT_FALSE(logger.Error(11, L"Number=%d String=%s", 1234, L"test001"));
-   EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"1234"));
-   EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"test001"));
-   logger.Log(0, L"Number=%d String=%s", 321, L"test02");
-   EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"321"));
-   EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"test02"));
+  TestLogger tl{};
+  Logger logger{tl};
+  EXPECT_FALSE(logger.Error(11, L"Number=%d String=%s", 1234, L"test001"));
+  EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"1234"));
+  EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"test001"));
+  logger.Log(0, L"Number=%d String=%s", 321, L"test02");
+  EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"321"));
+  EXPECT_NE(nullptr, wcsstr(tl.messages.c_str(), L"test02"));
 }
 
 TEST(MessageBuffer, SetClearSetClear)
 {
-   MessageBuffer mb;
+   MessageBuffer mb{};
    mb.set(L"abcde");
    EXPECT_STREQ(L"abcde", mb.message());
    mb.clear();
@@ -30,7 +30,7 @@ TEST(MessageBuffer, SetClearSetClear)
 
 TEST(MessageBuffer, SetSetClear)
 {
-   MessageBuffer mb;
+   MessageBuffer mb{};
    mb.set(L"abcde");
    EXPECT_STREQ(L"abcde", mb.message());
    mb.set("bcdefg");
@@ -39,7 +39,7 @@ TEST(MessageBuffer, SetSetClear)
 
 TEST(MessageBuffer, AppendAppendClear)
 {
-   MessageBuffer mb;
+   MessageBuffer mb{};
    mb.append(L"abcde");
    EXPECT_STREQ(L"abcde", mb.message());
    mb.append("bcdefg");
@@ -50,7 +50,7 @@ TEST(MessageBuffer, AppendAppendClear)
 
 TEST(MessageBuffer, FormatFormat)
 {
-   MessageBuffer mb;
+   MessageBuffer mb{};
    mb.format(L"Number=%d String=%hs", 123, "abcd");
    EXPECT_STREQ(L"Number=123 String=abcd", mb.message());
    mb.format(L" Number=%d String=%s", 234, L"pqrs");

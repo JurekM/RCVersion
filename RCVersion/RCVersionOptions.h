@@ -5,31 +5,31 @@
 class RCVersionOptions
 {
 public:
-	static const wchar_t Help[];
+  static const wchar_t Help[];
 
-	bool errorDetected;
+  bool errorDetected;
 
-	int majorVersion;
-	int minorVersion;
-	int buildNumber;
-	int revision;
+  int majorVersion;
+  int minorVersion;
+  int buildNumber;
+  int revision;
 
-   unsigned verbosity;
-   bool helpOnly;
+  unsigned verbosity;
+  bool helpOnly;
 
-	std::wstring inputFile;
-	std::wstring outputFile;
+  std::wstring inputFile;
+  std::wstring outputFile;
 
-	ILogger &logger;
+  ILogger &logger;
 
-	RCVersionOptions(ILogger &rlogger);
+  RCVersionOptions(ILogger &rlogger);
 
-	void CheckVerbosity(int argc, const wchar_t* argv[]);
-	bool Parse(int argc, const wchar_t* argv[]);
-	bool Validate();
+  void CheckVerbosity(int argc, const wchar_t* argv[]);
+  bool Parse(int argc, const wchar_t* argv[]);
+  bool Validate();
 
-	void Error(const wchar_t* format, ...);
+  void Error(const wchar_t* format, ...);
 
-	int NumericOption(const wchar_t* value);
-	static std::wstring PathOption(const wchar_t* value);
+  int NumericOption(const wchar_t* value);
+  static std::wstring PathOption(const wchar_t* value);
 };

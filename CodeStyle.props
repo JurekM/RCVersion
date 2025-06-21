@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="CodeStyleConfiguration">
+    <!-- Environment override for code style enforcement -->
+    <EnableCodeStyleEnforcement Condition="'$(ENABLE_CODE_STYLE)'!=''">$(ENABLE_CODE_STYLE)</EnableCodeStyleEnforcement>
+    <EnableCodeStyleEnforcement Condition="'$(EnableCodeStyleEnforcement)'==''">true</EnableCodeStyleEnforcement>
+    
+    <!-- Code Analysis Rules -->
+    <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)'=='' AND Exists('$(MSBuildThisFileDirectory)CodeStyle.ruleset')">$(MSBuildThisFileDirectory)CodeStyle.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis Condition="'$(EnableCodeStyleEnforcement)'=='true' AND '$(CodeAnalysisRuleSet)'!=''">true</RunCodeAnalysis>
+    
+    <!-- Compiler warnings for style enforcement -->
+    <WarningLevel>3</WarningLevel>
+    <TreatWarningAsError>false</TreatWarningAsError>
+    
+    <!-- Disable specific warnings that conflict with our style -->
+    <!-- C4996: 'function': was declared deprecated -->
+    <!-- C4710: 'function': function not inlined -->
+    <!-- C4711: 'function': selected for automatic inline expansion -->
+    <!-- C4514: 'function': unreferenced inline function has been removed -->
+    <!-- C4820: 'bytes' bytes padding added after construct 'member_name' -->
+    <DisableSpecificWarnings>4996;4710;4711;4514;4820</DisableSpecificWarnings>
+    
+    <!-- C++ Language Standard -->
+    <LanguageStandard>stdcpp14</LanguageStandard>
+    <LanguageStandard_C>stdc11</LanguageStandard_C>
+    
+    <!-- Documentation generation (disabled by default) -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  
+  <!-- Style enforcement through compiler settings -->
+  <ItemDefinitionGroup Condition="'$(EnableCodeStyleEnforcement)'=='true'">
+    <ClCompile>
+      <!-- Use standard warning level instead of /Wall to avoid noise -->
+      <!-- /Wall generates too many informational warnings (C4710, C4711, etc.) -->
+      
+      <!-- Precompiled header consistency -->
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      
+      <!-- Unicode support -->
+      <CharacterSet>Unicode</CharacterSet>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  
+  <!-- 
+    Code Style Documentation (Embedded)
+    
+    RCVersion Code Style Guidelines - Custom Allman Style:
+    
+    FORMATTING:
+    - Braces: Always on new lines, unindented (Allman style)
+    - Indentation: 2 spaces, never tabs
+    - Line length: 120 characters maximum
+    - Blank lines: Double between major sections, single between logical blocks
+    
+    NAMING CONVENTIONS:
+    - Classes: PascalCase (RCVersionOptions, MessageBuffer)
+    - Template parameters: PascalCase like classes (CharT, TraitsT, not charT, traitsT)
+    - Functions: PascalCase (UpdateFile, LoadFile, Parse)
+    - Variables: camelCase (errorDetected, inputFile, verbosity)
+    - Constants: ALL_CAPS with underscores (LOG_LEVEL, logError)
+    - Member variables: camelCase with descriptive names
+    - Files: PascalCase.h/.cpp (RCFileHandler.h, RCVersionOptions.cpp)
+    
+    BRACES AND CONTROL STRUCTURES:
+    - Always use braces for single statements in if/for/while
+    - Opening brace on new line, same indentation as statement
+    - Closing brace on new line, aligned with opening statement
+    - Exception: Short functions may be on single line
+    - Exception: Short case labels may be on single line
+    
+    CONSTRUCTOR INITIALIZATION:
+    - Colon on new line after constructor declaration
+    - Each initializer on new line with comma at start
+    - Example:
+        Constructor(params)
+          : member1(value1)
+          , member2(value2)
+        {
+        }
+    
+    INCLUDE ORDER:
+    1. stdafx.h (precompiled header - always first in .cpp)
+    2. Corresponding header file (for .cpp files)
+    3. System/Windows headers
+    4. Project headers
+    5. Third-party headers (WIL, gtest)
+    
+    ACCESS SPECIFIERS:
+    - public: first
+    - protected: second
+    - private: last
+    - No blank line between access specifier and first member
+    
+    LANGUAGE FEATURES:
+    - Use C++14 features: auto, nullptr, override, range-based for, lambda expressions
+    - Use C++11 features: smart pointers, move semantics, uniform initialization
+    - Prefer RAII for resource management
+    - Use templates for char/wchar_t flexibility
+    - Wide strings (wchar_t*) for Windows APIs
+    - Consistent error handling with bool return + error code storage
+    - Use std::unique_ptr and std::shared_ptr for memory management
+    - Consider const references for read-only parameters
+    
+    COMMENTS:
+    - Block comments with decorative separators for major sections
+    - Inline comments with // for brief explanations
+    - Multi-line comments with /* */ for code blocks in templates
+    - No trailing comments on variable declarations
+    
+    SPACING:
+    - Space after control flow keywords: if (, for (, while (
+    - No space after function names: Function(
+    - Space around operators: a + b, x = y
+    - No space in template angle brackets: vector<int>
+    - Space after comma in parameter lists: Function(a, b, c)
+    
+    TEMPLATE STYLE:
+    - Template parameters on same line if they fit
+    - Use meaningful parameter names: template<class CharT, class TraitsT>
+    - Template parameters follow PascalCase like classes (CharT, TraitsT)
+    - Prefer class over typename for template parameters
+    - Template specializations grouped together
+  -->
+</Project>

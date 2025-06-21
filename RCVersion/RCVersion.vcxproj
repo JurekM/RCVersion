@@ -52,6 +52,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="..\ProjectDependencies.props" />
+  <Import Project="..\CodeStyle.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -69,22 +70,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)_$(Configuration)-$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)\__bin\$(Configuration)-$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)\__int\$(ProjectName)\$(Configuration)-$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)_$(Configuration)-$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)\__bin\$(Configuration)-$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)\__int\$(ProjectName)\$(Configuration)-$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)_$(Configuration)-$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)\__bin\$(Configuration)-$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)\__int\$(ProjectName)\$(Configuration)-$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)_$(Configuration)-$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)\__bin\$(Configuration)-$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)\__int\$(ProjectName)\$(Configuration)-$(Platform)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

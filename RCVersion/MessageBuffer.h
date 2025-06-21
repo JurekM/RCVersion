@@ -55,14 +55,14 @@ public:
 
    void append(const char* text)
    {
-      wchar_t line[1024] = { 0 };
+      wchar_t line[1024]{};
       MultiByteToWideChar(CP_UTF8, 0, text, int(strlen(text)), line, _countof(line) - 1);
       append(line);
    }
 
    void format(const wchar_t* format, ...)
    {
-      wchar_t line[1024] = { 0 };
+      wchar_t line[1024]{};
       va_list vList;
       va_start(vList, format);
       _vsnwprintf_s(line, _TRUNCATE, format, vList);

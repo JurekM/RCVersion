@@ -15,8 +15,8 @@
 
 TEST(RCVersionOptions, AllOptions1)
 {
-   TestLogger logger;
-   RCVersionOptions vo(logger);
+   TestLogger logger{};
+   RCVersionOptions vo{logger};
 
    const wchar_t* argv[] = {
       L"",
@@ -43,8 +43,8 @@ TEST(RCVersionOptions, AllOptions1)
 
 TEST(RCVersionOptions, AllOptions2)
 {
-   TestLogger logger;
-   RCVersionOptions vo(logger);
+   TestLogger logger{};
+   RCVersionOptions vo{logger};
 
    const wchar_t* argv[] = {
       L"",
@@ -70,8 +70,8 @@ TEST(RCVersionOptions, AllOptions2)
 
 TEST(RCVersionOptions, MinimumOptions)
 {
-   TestLogger logger;
-   RCVersionOptions vo(logger);
+   TestLogger logger{};
+   RCVersionOptions vo{logger};
 
    const wchar_t* argv[] = {
       L"",
@@ -91,8 +91,8 @@ TEST(RCVersionOptions, MinimumOptions)
 
 TEST(RCVersionOptions, BadOptions)
 {
-   TestLogger logger;
-   RCVersionOptions vo(logger);
+   TestLogger logger{};
+   RCVersionOptions vo{logger};
 
    const wchar_t* argv[] = {
       L"",
@@ -108,8 +108,8 @@ TEST(RCVersionOptions, BadOptions)
 
 TEST(RCVersionOptions, DuplicateFileName)
 {
-   TestLogger logger;
-   RCVersionOptions vo(logger);
+   TestLogger logger{};
+   RCVersionOptions vo{logger};
 
    const wchar_t* argv[] = {
       L"",
@@ -124,8 +124,8 @@ TEST(RCVersionOptions, DuplicateFileName)
 
 TEST(RCVersionOptions, MissingFileName)
 {
-   TestLogger logger;
-   RCVersionOptions vo(logger);
+   TestLogger logger{};
+   RCVersionOptions vo{logger};
 
    const wchar_t* argv[] = {
       L"",

@@ -1,17 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36203.30 d17.14
+VisualStudioVersion = 17.14.36203.30
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RCVersion", "RCVersion\RCVersion.vcxproj", "{1FBAC31D-B53A-4F2C-AF7C-479D4D79E3AB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{E5854EE7-ECCE-4EA9-8954-31A0650246A1}"
 	ProjectSection(SolutionItems) = preProject
+		.clang-format = .clang-format
+		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		CLAUDE.md = CLAUDE.md
+		CodeStyle.props = CodeStyle.props
 		GTest.props = GTest.props
 		LICENSE = LICENSE
+		ProjectDependencies.props = ProjectDependencies.props
 		README.md = README.md
 		test-in.rc = test-in.rc
 		test-info.cs = test-info.cs
@@ -46,5 +50,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA24C5CE-DBC7-488A-945A-0C32EFDA9BD4}
 	EndGlobalSection
 EndGlobal

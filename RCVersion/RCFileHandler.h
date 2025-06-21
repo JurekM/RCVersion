@@ -17,7 +17,7 @@ public:
 
    unsigned Error() const { return error; }
    int Verbosity() const { return logger.Verbosity(); }
-   void Verbosity(int value) { logger.Verbosity (value); }
+   void Verbosity(int value) { logger.Verbosity(value); }
 
    bool LoadFile(const wchar_t* path, size_t padding, std::vector<unsigned char>& buffer);
    bool SaveFile(const wchar_t* path, void* buffer, size_t bytes);

@@ -31,14 +31,14 @@ L"\nLicense: https://github.com/JurekM/RCVersion"
 // 
 // ---------------------------------------------------------------------------
 RCVersionOptions::RCVersionOptions(ILogger &rlogger)
-   : errorDetected(false)
-   , majorVersion(-1)
-   , minorVersion(-1)
-   , buildNumber(-1)
-   , revision(-1)
-   , verbosity(3)
-   , helpOnly(false)
-   , logger(rlogger)
+  : errorDetected(false)
+  , majorVersion(-1)
+  , minorVersion(-1)
+  , buildNumber(-1)
+  , revision(-1)
+  , verbosity(3)
+  , helpOnly(false)
+  , logger(rlogger)
 {
 }
 
@@ -48,12 +48,12 @@ RCVersionOptions::RCVersionOptions(ILogger &rlogger)
 // ---------------------------------------------------------------------------
 void RCVersionOptions::Error(const wchar_t* format, ...)
 {
-   errorDetected = true;
-   va_list vList;
-   va_start(vList, format);
-   wchar_t buffer[1024] = { 0 };
-   _vsnwprintf_s(buffer, _TRUNCATE, format, vList);
-   logger.Log(buffer);
+  errorDetected = true;
+  va_list vList;
+  va_start(vList, format);
+  wchar_t buffer[1024]{};
+  _vsnwprintf_s(buffer, _TRUNCATE, format, vList);
+  logger.Log(buffer);
 }
 
 
@@ -62,14 +62,16 @@ void RCVersionOptions::Error(const wchar_t* format, ...)
 // ---------------------------------------------------------------------------
 int RCVersionOptions::NumericOption(const wchar_t* value)
 {
-   wchar_t* tail = nullptr;
-   int result = wcstoul(value, &tail, 10);
+  wchar_t* tail{nullptr};
+  int result = wcstoul(value, &tail, 10);
 
-   if (0 == *tail)
-      return int(result);
+  if (0 == *tail)
+  {
+    return int(result);
+  }
 
-   Error(L"*** Invalid option value: [%s]", value);
-   return -1;
+  Error(L"*** Invalid option value: [%s]", value);
+  return -1;
 }
 
 
@@ -78,14 +80,18 @@ int RCVersionOptions::NumericOption(const wchar_t* value)
 // ---------------------------------------------------------------------------
 std::wstring RCVersionOptions::PathOption(const wchar_t* value)
 {
-   if (!value || !*value)
-      return std::wstring();
+  if (!value || !*value)
+  {
+    return std::wstring();
+  }
 
-   wchar_t path[1024] = { 0 };
-   if (!ExpandEnvironmentStrings(value, path, _countof(path)))
-      return value;
+  wchar_t path[1024]{};
+  if (!ExpandEnvironmentStrings(value, path, _countof(path)))
+  {
+    return value;
+  }
 
-   return path;
+  return path;
 }
 
 
@@ -94,17 +100,19 @@ std::wstring RCVersionOptions::PathOption(const wchar_t* value)
 // ---------------------------------------------------------------------------
 void RCVersionOptions::CheckVerbosity(int argc, const wchar_t* argv[])
 {
-   for (int n = 1; n < argc; ++n)
-   {
-      const wchar_t* arg = argv[n];
-      if ('/' == arg[0] && 'v' == towlower(arg[1]) && ':' == arg[2] && iswdigit(arg[3]))
+  for (int n = 1; n < argc; ++n)
+  {
+    const wchar_t* arg = argv[n];
+    if ('/' == arg[0] && 'v' == towlower(arg[1]) && ':' == arg[2] && iswdigit(arg[3]))
+    {
+      wchar_t* tail{nullptr};
+      unsigned long result = wcstoul(&arg[4], &tail, 10);
+      if (0 == *tail)
       {
-         wchar_t* tail = nullptr;
-         unsigned long result = wcstoul(&arg[4], &tail, 10);
-         if (0 == *tail)
-            verbosity = int(result);
+        verbosity = int(result);
       }
-   }
+    }
+  }
 }
 
 
@@ -113,74 +121,90 @@ void RCVersionOptions::CheckVerbosity(int argc, const wchar_t* argv[])
 // ---------------------------------------------------------------------------
 bool RCVersionOptions::Parse(int argc, const wchar_t* argv[])
 {
-   errorDetected = false;
+  errorDetected = false;
 
-   for (int nArg = 1; nArg < argc; ++nArg)
-   {
-      LPCWSTR arg = argv[nArg];
+  for (int nArg = 1; nArg < argc; ++nArg)
+  {
+    LPCWSTR arg = argv[nArg];
 
-      if (!arg || !*arg)
-         continue;
+    if (!arg || !*arg)
+    {
+      continue;
+    }
 
-      if (L'/' == *arg || L'-' == *arg)
+    if (L'/' == *arg || L'-' == *arg)
+    {
+      wchar_t code = towlower(arg[1]);
+      bool colon = (0 != code && L':' == arg[2]);
+      const wchar_t* value{colon ? &arg[3] : nullptr};
+
+      if (L'?' == code)
       {
-         wchar_t code = towlower(arg[1]);
-         bool colon = (0 != code && L':' == arg[2]);
-         const wchar_t* value = colon ? &arg[3] : 0;
+        helpOnly = true;
+        verbosity = 0;
+        return false;
+      }
 
-         if (L'?' == code)
-         {
-            helpOnly = true;
-            verbosity = 0;
-            return false;
-         }
+      if (!value)
+      {
+        Error(L"*** Invalid option format: [%s]", arg);
+        continue;
+      }
 
-         if (!value)
-         {
-            Error(L"*** Invalid option format: [%s]", arg);
-            continue;
-         }
-
-         switch (code)
-         {
-         case L'm':
-            if (*value)
-               majorVersion = NumericOption(value);
-            break;
-         case L'n':
-            if (*value)
-               minorVersion = NumericOption(value);
-            break;
-         case L'b':
-            if (*value)
-               buildNumber = NumericOption(value);
-            break;
-         case L'r':
-            if (*value)
-               revision = NumericOption(value);
-            break;
-         case L'o':
-            outputFile = PathOption(value);
-            break;
-         case L'v':
-            if (*value)
-               verbosity = NumericOption(value);
-            break;
-         default:
-            Error(L"*** Unknown option: [%s]", arg);
-            break;
-         }
+      switch (code)
+      {
+      case L'm':
+        if (*value)
+        {
+          majorVersion = NumericOption(value);
+        }
+        break;
+      case L'n':
+        if (*value)
+        {
+          minorVersion = NumericOption(value);
+        }
+        break;
+      case L'b':
+        if (*value)
+        {
+          buildNumber = NumericOption(value);
+        }
+        break;
+      case L'r':
+        if (*value)
+        {
+          revision = NumericOption(value);
+        }
+        break;
+      case L'o':
+        outputFile = PathOption(value);
+        break;
+      case L'v':
+        if (*value)
+        {
+          verbosity = NumericOption(value);
+        }
+        break;
+      default:
+        Error(L"*** Unknown option: [%s]", arg);
+        break;
+      }
+    }
+    else
+    {
+      if (inputFile.empty())
+      {
+        inputFile = PathOption(arg);
       }
       else
       {
-         if (inputFile.empty())
-            inputFile = PathOption(arg);
-         else
-            Error(L"*** Input file already defined as: [%s], unexpected argument: [%s]", inputFile.c_str(), arg);
+        Error(L"*** Input file already defined as: [%s], unexpected argument: [%s]", inputFile.c_str(), arg);
       }
-   }
+    }
+  }
 
-   return !errorDetected;
+  return !errorDetected;
 }
 
 
@@ -189,16 +213,25 @@ bool RCVersionOptions::Parse(int argc, const wchar_t* argv[])
 // ---------------------------------------------------------------------------
 bool RCVersionOptions::Validate()
 {
-   if (helpOnly)
-      return false;
+  if (helpOnly)
+  {
+    return false;
+  }
 
-   if (inputFile.empty())
-      Error(L"*** Missing 'input file' parameter.");
-   if (outputFile.empty())
-      outputFile = inputFile;
+  if (inputFile.empty())
+  {
+    Error(L"*** Missing 'input file' parameter.");
+  }
 
-   if (errorDetected)
-      return false;
+  if (outputFile.empty())
+  {
+    outputFile = inputFile;
+  }
 
-   return !errorDetected;
+  if (errorDetected)
+  {
+    return false;
+  }
+
+  return !errorDetected;
 }

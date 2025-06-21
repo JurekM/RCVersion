@@ -1,0 +1,85 @@
+# RCVersion Custom Allman Style
+# Based on Allman style with project-specific modifications
+# Targets C++14 standard
+
+BasedOnStyle: Microsoft
+Language: Cpp
+Standard: c++14
+
+# Indentation and basic formatting
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ColumnLimit: 120
+
+# Brace positioning (Allman style)
+BreakBeforeBraces: Allman
+Cpp11BracedListStyle: true
+
+# Constructor initializer lists - colon and commas on new lines
+BreakConstructorInitializers: BeforeColon
+ConstructorInitializerIndentWidth: 2
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+
+# Allow short constructs on single lines (per requirements)
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+
+# Indentation rules
+IndentCaseLabels: true
+IndentPPDirectives: None
+AccessModifierOffset: -2
+IndentAccessModifiers: false
+
+# Spacing
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: false
+SpacesInContainerLiterals: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Line breaks and alignment
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignOperands: true
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: true
+BinPackArguments: false
+BinPackParameters: false
+
+# Pointer and reference alignment
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# Include organization
+SortIncludes: false  # Keep manual include order as per style guide
+IncludeBlocks: Preserve
+
+# Template formatting
+AlwaysBreakTemplateDeclarations: MultiLine
+
+# Namespace formatting
+NamespaceIndentation: None
+CompactNamespaces: false
+
+# Comments
+ReflowComments: true
+
+# Other formatting
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 2
+SortUsingDeclarations: false
+
+# Control statement formatting
+AllowShortEnumsOnASingleLine: false
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: true

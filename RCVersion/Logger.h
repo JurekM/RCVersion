@@ -25,7 +25,7 @@ public:
       va_list vList;
       va_start(vList, format);
 
-      wchar_t line[1024] = { 0 };
+      wchar_t line[1024]{};
       _vsnwprintf_s(line, _TRUNCATE, format, vList);
 
       logger.Log(line);
@@ -36,7 +36,7 @@ public:
       va_list vList;
       va_start(vList, format);
 
-      wchar_t line[1024] = { 0 };
+      wchar_t line[1024]{};
       _vsnwprintf_s(line, _TRUNCATE, format, vList);
       logger.Log(line);
 

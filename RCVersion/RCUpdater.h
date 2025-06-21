@@ -4,8 +4,8 @@
 #include "MessageBuffer.h"
 #include "ILogger.h"
 
-template <class charT>
-const charT** GetKeywordTable() { return nullptr; }
+template <class CharT>
+const CharT** GetKeywordTable() { return nullptr; }
 
 template <>
 inline const wchar_t** GetKeywordTable<wchar_t>()
@@ -53,7 +53,7 @@ inline const char** GetKeywordTable<char>()
    return keywords;
 }
 
-template<class charT, class traitsT = std::char_traits<charT>>
+template<class CharT, class TraitsT = std::char_traits<CharT>>
 class RCUpdater
 {
 public:
@@ -75,12 +75,12 @@ public:
    }
 
    // Left-trim chaff characters
-   static charT* LTrim(charT*psz, const charT*chaff)
+   static CharT* LTrim(CharT*psz, const CharT*chaff)
    {
       while (*psz)
       {
-         bool found = false;
-         for (const charT* c = chaff; *c && !found; ++c)
+         bool found{false};
+         for (const CharT* c = chaff; *c && !found; ++c)
          {
             if (*psz == *c)
                found = true;
@@ -93,11 +93,11 @@ public:
    }
 
    // Left-skip to a chaff character
-   static charT* LSkipTo(charT*psz, const charT*chaff)
+   static CharT* LSkipTo(CharT*psz, const CharT*chaff)
    {
       while (*psz)
       {
-         for (const charT* c = chaff; *c; ++c)
+         for (const CharT* c = chaff; *c; ++c)
          {
             if (*psz == *c)
                return psz;
@@ -117,16 +117,16 @@ public:
       return wcsstr(where, what);
    }
 
-   static charT* NextLine(charT*line)
+   static CharT* NextLine(CharT*line)
    {
       while (*line && '\n' != *line)
          ++line;
       return *line ? line + 1 : line;
    }
 
-   static charT* SkipComment(charT*psz)
+   static CharT* SkipComment(CharT*psz)
    {
-      static const charT space[] = { ' ', '\t', 0 };
+      static const CharT space[] = { ' ', '\t', 0 };
       psz = LTrim(psz, space);
 
       if ('/' == psz[0] && '/' == psz[1])
@@ -134,18 +134,18 @@ public:
 
       if ('/' == psz[0] && '*' == psz[1])
       {
-         static const charT endcomment[] = { '*', '/', 0 };
-         charT *next = strfind(psz + 2, endcomment);
+         static const CharT endcomment[] = { '*', '/', 0 };
+         CharT *next = strfind(psz + 2, endcomment);
          return (nullptr == next) ? psz : LTrim(next + 2, space);
       }
 
       return psz;
    }
 
-   static charT* SkipAllComments(charT*psz)
+   static CharT* SkipAllComments(CharT*psz)
    {
-      static const charT white[] = { ' ', '\t', '\r', '\n', 0 };
-      charT* next = SkipComment(psz);
+      static const CharT white[] = { ' ', '\t', '\r', '\n', 0 };
+      CharT* next = SkipComment(psz);
       while (psz != next)
       {
          psz = LTrim(next, white);
@@ -184,10 +184,10 @@ public:
       return 0 < _snwprintf_s(buffer, chars, _TRUNCATE, L"%d, %d, %d, %d", major, minor, build, revision);
    }
 
-   static bool parse(charT*xbuffer, charT**tail, int &major, int &minor, int &build, int &revision)
+   static bool parse(CharT*xbuffer, CharT**tail, int &major, int &minor, int &build, int &revision)
    {
-      static const charT space[] = { ' ','\t' , 0 };
-      static const charT chaff[] = { '.', ',', ' ', '\t', 0 };
+      static const CharT space[] = { ' ','\t' , 0 };
+      static const CharT chaff[] = { '.', ',', ' ', '\t', 0 };
       *tail = LTrim(xbuffer, space);
 
       if (!str2int(*tail, major, chaff))
@@ -202,35 +202,35 @@ public:
       return true;
    }
 
-   static bool replace(charT *buffer, size_t totalChars, size_t oldChars, const charT* newString)
+   static bool replace(CharT *buffer, size_t totalChars, size_t oldChars, const CharT* newString)
    {
       if (totalChars <= oldChars)
          return false;
-      size_t newChars = traitsT::length(newString);
+      size_t newChars = TraitsT::length(newString);
       if (oldChars < newChars)
       {
-         size_t oldTail = traitsT::length(buffer + oldChars);
+         size_t oldTail = TraitsT::length(buffer + oldChars);
          if (totalChars <= oldTail + newChars)
             return false;
-         traitsT::move(buffer + newChars, buffer + oldChars, oldTail + 1);
+         TraitsT::move(buffer + newChars, buffer + oldChars, oldTail + 1);
       }
       else if (newChars < oldChars)
       {
-         traitsT::move(buffer + newChars, buffer + oldChars, traitsT::length(buffer + oldChars) + 1);
+         TraitsT::move(buffer + newChars, buffer + oldChars, TraitsT::length(buffer + oldChars) + 1);
       }
-      traitsT::copy(buffer, newString, newChars);
+      TraitsT::copy(buffer, newString, newChars);
       return true;
    }
 
    // The next line after VERSIONINFO or zero if not found
-   static size_t FindStartOfVersion(charT *buffer)
+   static size_t FindStartOfVersion(CharT *buffer)
    {
-      static const charT space[] = { ' ', '\t', 0 };
-      static const charT stopper[] = { ' ', '\t', '\n', '/', 0 };
-      static const charT keyword[] = { 'V', 'E', 'R', 'S', 'I', 'O', 'N', 'I', 'N', 'F', 'O', 0 };
-      size_t length = traitsT::length(keyword);
+      static const CharT space[] = { ' ', '\t', 0 };
+      static const CharT stopper[] = { ' ', '\t', '\n', '/', 0 };
+      static const CharT keyword[] = { 'V', 'E', 'R', 'S', 'I', 'O', 'N', 'I', 'N', 'F', 'O', 0 };
+      size_t length = TraitsT::length(keyword);
 
-      charT* line = buffer;
+      CharT* line = buffer;
       while (*line)
       {
          line = SkipAllComments(line);
@@ -238,7 +238,7 @@ public:
          line = SkipComment(line);
 
          // Is this the space delimited keyword we need
-         bool found = 0 == traitsT::compare(keyword, line, length);
+         bool found = 0 == TraitsT::compare(keyword, line, length);
          found = found && (uint8_t(line[length]) <= uint8_t(' ') || '/' == line[length]);
          line = NextLine(line);
 
@@ -250,13 +250,13 @@ public:
       return 0;
    }
 
-   void FindVersionStrings(charT *buffer, size_t start, std::vector<size_t> &offsets)
+   void FindVersionStrings(CharT *buffer, size_t start, std::vector<size_t> &offsets)
    {
-      static const charT space[] = { ' ', '\t', 0 };
-      static const charT chaff[] = { ',',  ' ', '\t', 0 };
-      static const charT **keywords = GetKeywordTable<charT>();
+      static const CharT space[] = { ' ', '\t', 0 };
+      static const CharT chaff[] = { ',',  ' ', '\t', 0 };
+      static const CharT **keywords = GetKeywordTable<CharT>();
 
-      charT *line = buffer + start;
+      CharT *line = buffer + start;
       while (*line)
       {
          line = SkipComment(line);
@@ -267,19 +267,19 @@ public:
             continue;
          }
 
-         bool found = false;
+         bool found{false};
 
          for (unsigned ndx = 0; 0 != keywords[ndx]; ++ndx)
          {
-            const charT* keyword = keywords[ndx];
-            const charT code = *keyword++;
-            size_t length = traitsT::length(keyword);
+            const CharT* keyword = keywords[ndx];
+            const CharT code = *keyword++;
+            size_t length = TraitsT::length(keyword);
 
             // This is a STRINGFILEINFO name, not a keyword
             if ('\"' == code)
                continue;
 
-            if (0 != traitsT::compare(keyword, line, length))
+            if (0 != TraitsT::compare(keyword, line, length))
                continue;
             if (' ' < line[length] && '/' != line[length])
                continue;
@@ -287,7 +287,7 @@ public:
             found = true;
             if (7 <= verbosity || '-'==code && 6 <= verbosity)
             {
-               wchar_t msg[1024] = { 0 };
+               wchar_t msg[1024]{};
                _snwprintf_s(msg, _TRUNCATE, L"FOUND: [%c]:%s offset=%u", wchar_t(code), MessageBuffer(keyword).message(), unsigned(line - buffer));
                logger.Log(msg);
             }
@@ -308,25 +308,25 @@ public:
 
                for (unsigned vx = 0; 0 != keywords[vx]; ++vx)
                {
-                  const charT* name = keywords[vx];
-                  const charT type = *name;
-                  size_t chars = traitsT::length(name);
+                  const CharT* name = keywords[vx];
+                  const CharT type = *name;
+                  size_t chars = TraitsT::length(name);
                   if ('\"' != type)
                      continue;
-                  if (0 != traitsT::compare(name, line, chars))
+                  if (0 != TraitsT::compare(name, line, chars))
                      continue;
                   line = SkipComment(line + chars);
                   line = LTrim(line, chaff);
                   line = SkipComment(line);
-                  if (*line <= charT(' '))
+                  if (*line <= CharT(' '))
                      continue;
-                  if (charT('\"') == *line)
+                  if (CharT('\"') == *line)
                      ++line;
 
                   line = LTrim(line, space);
                   if (6 <= verbosity)
                   {
-                     wchar_t msg[1024] = { 0 };
+                     wchar_t msg[1024]{};
                      _snwprintf_s(msg, _TRUNCATE, L"FOUND NAME: [%s] offset=%u", MessageBuffer(name).message(), unsigned(line - buffer));
                      logger.Log(msg);
                   }
@@ -355,10 +355,10 @@ public:
    }
 
 
-   unsigned UpdateVersion(charT *buffer, size_t chars, int xmajor, int xminor, int xbuild, int xrevision)
+   unsigned UpdateVersion(CharT *buffer, size_t chars, int xmajor, int xminor, int xbuild, int xrevision)
    {
       size_t start = FindStartOfVersion(buffer);
-      unsigned replacementsMade = 0;
+      unsigned replacementsMade{};
 
       error = ERROR_FILE_CORRUPT;
       if (0 == start)
@@ -372,17 +372,17 @@ public:
          return 0;
 
       error = NO_ERROR;
-      bool success = true;
+      bool success{true};
 
       for (auto iter = offsets.rbegin(); success && offsets.rend() != iter; ++iter)
       {
          size_t offset = *iter;
-         charT *tail = 0;
-         int major = -1, minor = -1, build = -1, revision = -1;
+         CharT *tail{nullptr};
+         int major{-1}, minor{-1}, build{-1}, revision{-1};
          if (!parse(buffer + offset, &tail, major, minor, build, revision))
          {
-            MessageBuffer msgb(std::basic_string<charT>(buffer + offset, tail).c_str());
-            wchar_t msg[1024] = { 0 };
+            MessageBuffer msgb(std::basic_string<CharT>(buffer + offset, tail).c_str());
+            wchar_t msg[1024]{};
             _snwprintf_s(msg, _TRUNCATE, L"Version parsing failed for [%s] at char [%c]", msgb.message(), wchar_t(*tail));
             logger.Log(msg);
             error = ERROR_FILE_CORRUPT;
@@ -395,11 +395,11 @@ public:
          build = (xbuild < 0) ? build + 1 : xbuild;
          revision = (xrevision < 0) ? revision : xrevision;
 
-         charT newVersion[256] = { 0 };
+         CharT newVersion[256]{};
 
          if (!format(newVersion, _countof(newVersion), major, minor, build, revision))
          {
-            wchar_t msg[1024] = { 0 };
+            wchar_t msg[1024]{};
             _snwprintf_s(msg, _TRUNCATE, L"Version formatting failed for [%d,%d,%d,%d]", major, minor, build, revision);
             logger.Log(msg);
             error = ERROR_FILE_CORRUPT;
@@ -408,9 +408,9 @@ public:
          }
 
          {
-            MessageBuffer from(std::basic_string<charT>(buffer + offset, tail).c_str());
-            MessageBuffer to(std::basic_string<charT>(newVersion).c_str());
-            wchar_t msg[1024] = { 0 };
+            MessageBuffer from(std::basic_string<CharT>(buffer + offset, tail).c_str());
+            MessageBuffer to(std::basic_string<CharT>(newVersion).c_str());
+            wchar_t msg[1024]{};
             _snwprintf_s(msg, _TRUNCATE, L"Replacing [%s] with [%s]", from.message(), to.message());
             if (3 <= verbosity)
                logger.Log(msg);
@@ -419,10 +419,10 @@ public:
          if (!replace(buffer + offset, chars - offset, tail - (buffer + offset), newVersion))
          {
             MessageBuffer msg1;
-            msg1.append(std::basic_string<charT>(buffer + offset, tail).c_str());
+            msg1.append(std::basic_string<CharT>(buffer + offset, tail).c_str());
             MessageBuffer msg2;
             msg2.append(newVersion);
-            wchar_t msg[1024] = { 0 };
+            wchar_t msg[1024]{};
             _snwprintf_s(msg, _TRUNCATE, L"Version replace failed for [%s] / [%s]", msg1.message(), msg2.message());
             logger.Log(msg);
             error = ERROR_INSUFFICIENT_BUFFER;
