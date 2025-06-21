@@ -2,17 +2,6 @@
 #include "RCVersionOptions.h"
 #include "TestLogger.h"
 
-
-// L"\nSyntax: RCVersion <resource-file.rc> [<options>]"
-// L"\n /b:<build-number>  new build number, default: increment by one"
-// L"\n /m:<major-version> new major version, default: unchanged"
-// L"\n /n:<minor-version> new minor version, default: unchanged"
-// L"\n /r:<revision>      new revision number, default: 0"
-// L"\n /o:<output-file>   output file path, default: same as input"
-// L"\n /v:{0|1}           verbose, default on"
-// L"\n"
-// L"\n"
-
 TEST(RCVersionOptions, AllOptions1)
 {
    TestLogger logger{};

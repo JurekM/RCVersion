@@ -52,13 +52,28 @@ msbuild RCVersionTests/RCVersionTests.vcxproj /p:Configuration=Debug /p:Platform
 
 ## Testing
 
-Uses Google Test framework. Tests are organized into:
-- **HandlerTests.cpp**: RC file processing tests
-- **HelperTests.cpp**: Utility class tests  
+Uses Google Test framework with comprehensive test coverage (140+ tests). Tests are organized into:
+
+**Core Functionality Tests:**
+- **HandlerTests.cpp**: RC file processing tests with Unicode/ANSI/BOM handling
+- **HelperTests.cpp**: Utility class tests for RAII wrappers
 - **OptionsTests.cpp**: Command-line parsing tests
 - **UpdaterTests.cpp**: Version updating logic tests
 
-Tests include coverage for Unicode/ANSI files, BOM handling, and various RC file formats.
+**Edge Case and Error Handling Tests:**
+- **FileHandlerErrorTests.cpp**: File I/O error conditions and edge cases
+- **OptionsEdgeCaseTests.cpp**: Command-line parsing edge cases and environment variables
+- **LoggerTests.cpp**: Logging verbosity levels and error handling
+- **MessageBufferEdgeCaseTests.cpp**: Unicode handling and format string edge cases
+- **RCUpdaterEdgeCaseTests.cpp**: Version parsing and buffer replacement edge cases
+- **UnicodeFileTests.cpp**: Comprehensive Unicode file encoding tests
+- **IntegrationTests.cpp**: End-to-end workflow testing
+
+**Test Infrastructure:**
+- All test fixtures use helper methods for temporary file/directory management
+- Automatic cleanup of test resources via RAII patterns
+- Comprehensive error condition testing without crashes or undefined behavior
+- Support for various RC file formats, encodings, and edge cases
 
 ## Code Patterns
 
