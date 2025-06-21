@@ -18,7 +18,7 @@ TEST(RCVersionOptions, AllOptions1)
    TestLogger logger;
    RCVersionOptions vo(logger);
 
-   wchar_t* argv[] = {
+   const wchar_t* argv[] = {
       L"",
       L"/m:11",
       L"/n:22",
@@ -46,7 +46,7 @@ TEST(RCVersionOptions, AllOptions2)
    TestLogger logger;
    RCVersionOptions vo(logger);
 
-   wchar_t* argv[] = {
+   const wchar_t* argv[] = {
       L"",
       L"..\\test-in.rc",
       L"/o:outfile.txt",
@@ -73,7 +73,7 @@ TEST(RCVersionOptions, MinimumOptions)
    TestLogger logger;
    RCVersionOptions vo(logger);
 
-   wchar_t* argv[] = {
+   const wchar_t* argv[] = {
       L"",
       L"..\\test-in.rc",
    };
@@ -94,7 +94,7 @@ TEST(RCVersionOptions, BadOptions)
    TestLogger logger;
    RCVersionOptions vo(logger);
 
-   wchar_t* argv[] = {
+   const wchar_t* argv[] = {
       L"",
       L"..\\test-in.rc",
       L"/z:zara",
@@ -111,7 +111,7 @@ TEST(RCVersionOptions, DuplicateFileName)
    TestLogger logger;
    RCVersionOptions vo(logger);
 
-   wchar_t* argv[] = {
+   const wchar_t* argv[] = {
       L"",
       L"..\\test-in.rc",
       L"duplicate.txt",
@@ -127,7 +127,7 @@ TEST(RCVersionOptions, MissingFileName)
    TestLogger logger;
    RCVersionOptions vo(logger);
 
-   wchar_t* argv[] = {
+   const wchar_t* argv[] = {
       L"",
       L"/v:1",
       L"/o:duplicate.txt",

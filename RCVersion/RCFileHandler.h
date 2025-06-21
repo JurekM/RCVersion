@@ -1,5 +1,6 @@
 #pragma once
 #include "Logger.h"
+#include <vector>
 
 class RCFileHandler
 {
@@ -18,7 +19,7 @@ public:
    int Verbosity() const { return logger.Verbosity(); }
    void Verbosity(int value) { logger.Verbosity (value); }
 
-   bool LoadFile(const wchar_t* path, size_t padding, void* &buffer, size_t &bytes);
+   bool LoadFile(const wchar_t* path, size_t padding, std::vector<unsigned char>& buffer);
    bool SaveFile(const wchar_t* path, void* buffer, size_t bytes);
 
    bool UpdateFile(const wchar_t *inpath, const wchar_t *outpath, int major, int minor, int build, int revision);

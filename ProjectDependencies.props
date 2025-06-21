@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="ProjectDependenciesConfiguration">
+    <!-- GTest Configuration -->
+    <!-- Allow environment override -->
+    <GTestRoot Condition="'$(GTEST_ROOT)'!=''">$(GTEST_ROOT)</GTestRoot>
+
+    <!-- Default to existing TFS location if no override -->
+    <GTestRoot Condition="'$(GTestRoot)'==''">$(MSBuildThisFileDirectory)..\..\TFS\Common\External\gtest-1.12.1</GTestRoot>
+
+    <!-- Derived paths -->
+    <GTestInclude>$(GTestRoot)\include</GTestInclude>
+    <GTestLibDir>$(GTestRoot)\lib-$(PlatformToolset)\$(Configuration)-$(Platform)</GTestLibDir>
+    <GTestExternalDir Condition="'$(GTEST_EXTERNAL)'!=''">$(GTEST_EXTERNAL)</GTestExternalDir>
+    <GTestExternalDir Condition="'$(GTestExternalDir)'==''">$(MSBuildThisFileDirectory)..\..\TFS\Common\External</GTestExternalDir>
+
+    <!-- WIL Configuration -->
+    <!-- Allow environment override -->
+    <WILRoot Condition="'$(WIL_ROOT)'!=''">$(WIL_ROOT)</WILRoot>
+
+    <!-- Default to existing TFS location if no override -->
+    <WILRoot Condition="'$(WILRoot)'==''">$(MSBuildThisFileDirectory)..\..\TFS\Common\External</WILRoot>
+
+    <!-- WIL include path -->
+    <WILInclude>$(WILRoot)</WILInclude>
+  </PropertyGroup>
+  
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WILInclude);$(GTestInclude);$(GTestExternalDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(GTestLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

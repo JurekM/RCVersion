@@ -5,3 +5,6 @@
 #include <string>
 #include <stdio.h>
 #include <tchar.h>
+
+// WIL utilities
+#include "wil/resource.h"

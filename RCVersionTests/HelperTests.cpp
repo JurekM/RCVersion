@@ -1,71 +1,7 @@
 #include "stdafx.h"
-#include "AutoFree.h"
-#include "AutoHClose.h"
 #include "TestLogger.h"
 #include "Logger.h"
 #include <MessageBuffer.h>
-
-TEST(AutoFree, NullNoCrash)
-{
-   void* ptr = nullptr;
-   {
-      ASSERT_EQ(nullptr, ptr);
-      AutoFree af(ptr);
-   }
-}
-
-TEST(AutoFree, Normal)
-{
-   void* ptr = malloc(100);
-   {
-      ASSERT_NE(nullptr, ptr);
-      AutoFree af(ptr);
-   }
-}
-
-TEST(AutoFree, ExplicitFree)
-{
-   void* ptr = malloc(100);
-   {
-      ASSERT_NE(nullptr, ptr);
-      AutoFree af(ptr);
-      af.Free();
-   }
-}
-
-TEST(AutoHClose, NullNoCrash)
-{
-   HANDLE h = nullptr;
-   {
-      ASSERT_NE(INVALID_HANDLE_VALUE, h);
-      AutoHClose ahc(h);
-   }
-}
-
-TEST(AutoHClose, Normal)
-{
-   HANDLE h = CreateEvent(nullptr, false, false, nullptr);
-   {
-      ASSERT_NE(INVALID_HANDLE_VALUE, h);
-      AutoHClose ahc(h);
-   }
-   DWORD flags = 0;
-   EXPECT_EQ(0, ::GetHandleInformation(h, &flags));
-   EXPECT_EQ(ERROR_INVALID_HANDLE, GetLastError());
-}
-
-TEST(AutoHClose, ExplicitClose)
-{
-   HANDLE h = CreateEvent(nullptr, false, false, nullptr);
-   {
-      ASSERT_NE(INVALID_HANDLE_VALUE, h);
-      AutoHClose ahc(h);
-      ahc.Close();
-      DWORD flags = 0;
-      EXPECT_EQ(0, ::GetHandleInformation(h, &flags));
-      EXPECT_EQ(ERROR_INVALID_HANDLE, GetLastError());
-   }
-}
 
 TEST(Logger, Normal)
 {

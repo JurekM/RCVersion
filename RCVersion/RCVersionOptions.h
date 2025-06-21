@@ -24,8 +24,8 @@ public:
 
 	RCVersionOptions(ILogger &rlogger);
 
-	void CheckVerbosity(int argc, wchar_t* argv[]);
-	bool Parse(int argc, wchar_t* argv[]);
+	void CheckVerbosity(int argc, const wchar_t* argv[]);
+	bool Parse(int argc, const wchar_t* argv[]);
 	bool Validate();
 
 	void Error(const wchar_t* format, ...);

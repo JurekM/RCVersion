@@ -156,7 +156,7 @@ public:
 
    static bool str2int(char* &psz, int& value, const char* chaff)
    {
-      if (!isdigit(unsigned char(*psz)))
+      if (!isdigit(uint8_t(*psz)))
          return false;
       value = strtol(psz, &psz, 10);
       if (chaff && *chaff)
@@ -239,7 +239,7 @@ public:
 
          // Is this the space delimited keyword we need
          bool found = 0 == traitsT::compare(keyword, line, length);
-         found = found && (unsigned char(line[length]) <= unsigned char(' ') || '/' == line[length]);
+         found = found && (uint8_t(line[length]) <= uint8_t(' ') || '/' == line[length]);
          line = NextLine(line);
 
          // Return the offset of the next line

@@ -92,11 +92,11 @@ std::wstring RCVersionOptions::PathOption(const wchar_t* value)
 // ---------------------------------------------------------------------------
 // 
 // ---------------------------------------------------------------------------
-void RCVersionOptions::CheckVerbosity(int argc, wchar_t* argv[])
+void RCVersionOptions::CheckVerbosity(int argc, const wchar_t* argv[])
 {
    for (int n = 1; n < argc; ++n)
    {
-      wchar_t* arg = argv[n];
+      const wchar_t* arg = argv[n];
       if ('/' == arg[0] && 'v' == towlower(arg[1]) && ':' == arg[2] && iswdigit(arg[3]))
       {
          wchar_t* tail = nullptr;
@@ -111,7 +111,7 @@ void RCVersionOptions::CheckVerbosity(int argc, wchar_t* argv[])
 // ---------------------------------------------------------------------------
 // 
 // ---------------------------------------------------------------------------
-bool RCVersionOptions::Parse(int argc, wchar_t* argv[])
+bool RCVersionOptions::Parse(int argc, const wchar_t* argv[])
 {
    errorDetected = false;
 

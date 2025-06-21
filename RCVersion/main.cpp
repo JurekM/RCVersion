@@ -14,7 +14,7 @@ class ConsoleLogger : public ILogger
    }
 };
 
-int _tmain(int argc, _TCHAR* argv[])
+int _tmain(int argc, const wchar_t* argv[])
 {
    ConsoleLogger clogger;
    Logger logger(clogger);
